@@ -19,6 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
-    path('share/', include('cabshare.urls')),
+    path('cabshare/', include('cabshare.urls')),
 
+    path('oauth/',include('social_django.urls',namespace="social")),
 ]
