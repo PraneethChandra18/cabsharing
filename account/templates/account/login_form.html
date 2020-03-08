@@ -1,14 +1,26 @@
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {% include 'account/form-template.html' %}
-  <div class="form-group row">
-    <div class="col-sm-10">
-      <button type="submit" class="btn btn-success">Submit</button>
+{% extends 'account/base2.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block body %}
+  <div class="card text-center w-25 mx-auto">
+    <div class="card-header"> <strong>Login</strong> </div>
+    <div class="card-body" style="background-color:white">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include 'account/form-template.html' %}
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-success">Login</button>
+          </div>
+        </div>
+        <p><--- OR ---></p>
+        <a href="{% url 'social:begin' 'google-oauth2' %}"> <button type="button" class="btn btn-light"><i class='fab fa-google'></i>  Google </button> &nbsp; </a>
+        <a href="{% url 'social:begin' 'github' %}"> <button type="button" class="btn btn-light"><i class='fab fa-github'></i>  Github</button> </a>
+      </form>
+    </div>
+    <div class="card-footer text-muted">
+    Not registered yet? Then <a href="{% url 'account:register' %}"> SignUp </a>
     </div>
   </div>
-
-  <p><--- OR ---></p>
-  <a href="{% url 'social:begin' 'google-oauth2' %}"> Google </a>
-  <a href="{% url 'social:begin' 'github' %}"> Github </a>
-
-</form>
+{% endblock %}

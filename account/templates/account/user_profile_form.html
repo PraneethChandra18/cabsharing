@@ -1,0 +1,17 @@
+{% extends 'account/base2.html'%}
+
+{% block title%} Add Details {% endblock %}
+
+{% block body %}
+<div class="card-body" style="background-color:white">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include 'account/form-template.html' %}
+    <div class="form-group row">
+      <div class="col-sm-10">
+        <button type="submit" class="btn btn-success">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
