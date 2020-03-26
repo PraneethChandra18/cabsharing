@@ -4,13 +4,16 @@
 
 {% block body %}
 
-<a href="{% url 'account:profile-update' user_profile.id %}"><button type="button" class="btn btn-light"><i class='fas fa-edit' style='font-size:24px;color:blue'></i>Edit</button></a>
+<div class="card" style="width:400px">
+ <img class="card-img-top" src="{{ user_profile.photo.url }}" alt="Card image">
+ <div class="card-body">
+   <h4 class="card-title">{{ user_profile.name }}</h4>
+   <p class="card-text"> DOB : {{ user_profile.date_of_birth }}</p>
+   <p class="card-text"> Gender : {{ user_profile.gender }}</p>
+   <a href="{% url 'account:profile-update' user_profile.id %}"><button type="button" class="btn btn-light"><i class='fas fa-edit' style='font-size:24px;color:blue'></i>Edit</button></a>
 
-  <h1> These are details of {{ user_profile.name }} </h1>
-  <img src="{{ user_profile.photo }}">
-  <p> DOB : {{ user_profile.date_of_birth }}</p>
-  <p> Gender : {{ user_profile.gender }}</p>
-  <p> Dept. : {{ user_profile.department }}</p>
+ </div>
+</div>
 
 
 

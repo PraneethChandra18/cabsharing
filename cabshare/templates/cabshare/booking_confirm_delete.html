@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <input type="submit" value="Confirm">
+    <a href="{% url 'cabshare:my_bookings' %}"><button type="button" class="btn btn-light">No! Go back </button></a>
+</form>

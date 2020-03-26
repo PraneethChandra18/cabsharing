@@ -85,4 +85,4 @@ class ProfileCreate(LoginRequiredMixin, CreateView):
 
 class ProfileUpdate(LoginRequiredMixin, UpdateView):
     model = User_profile
-    fields= ['photo','date_of_birth','hostel','department','gender','bio']
+    fields= ['name','photo','date_of_birth','hostel','department','gender','bio']

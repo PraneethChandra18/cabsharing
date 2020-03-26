@@ -1,0 +1,79 @@
+{% extends 'cabshare/base.html'%}
+
+{% block title%} My Bookings {% endblock %}
+
+{% block body %}
+<h2> Current Bookings </h2>
+{% if bookings %}
+
+  <div class="row">
+  <!-- row attribute along with col attribute below keeps cards in horizontal order -->
+  {% for booking in bookings %}
+    {% if booking.is_active %}
+
+      <div class="col-sm-12 col-lg-3">
+        <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
+        <!-- col-lg-num -> here num decides the gap between cards -->
+        <div class="card h-100" style="width:400px">
+          <div class="card-body">
+            <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+            <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+            <a href="{% url 'cabshare:booking-update' booking.id %}" class="btn btn-outline-dark"><i class='fas fa-edit'></i>Edit &nbsp;</a>
+            <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Cancel </button>
+            <div class="modal" id="myModal{{booking.pk}}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title"> Cancel Booking </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+
+                  <div class="modal-body"> Are you sure to cancel this booking? </div>
+
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
+                    <a href="{% url 'cabshare:booking-delete' booking.id %}"> <button type="button" class="btn btn-danger"> Cancel Booking </button> </a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+{% else %}
+  <h3>No Bookings</h3>
+{% endif %}
+
+
+<h2> Previous Bookings </h2>
+{% if bookings %}
+
+  <div class="row">
+  <!-- row attribute along with col attribute below keeps cards in horizontal order -->
+  {% for booking in bookings %}
+    {% if not booking.is_active %}
+
+      <div class="col-sm-12 col-lg-3">
+        <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
+        <!-- col-lg-num -> here num decides the gap between cards -->
+        <div class="card h-100" style="width:400px">
+          <div class="card-body">
+            <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+            <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+{% else %}
+  <h3>No Bookings</h3>
+{% endif %}
+
+{% endblock %}

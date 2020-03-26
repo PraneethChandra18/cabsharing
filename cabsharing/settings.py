@@ -134,6 +134,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 
 #Social-Auth
 LOGIN_REDIRECT_URL = 'account:login-redirect'
