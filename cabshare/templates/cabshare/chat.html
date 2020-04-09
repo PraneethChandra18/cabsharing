@@ -1,0 +1,92 @@
+{% extends 'cabshare/base.html' %}
+
+{% block title %} Profile {% endblock %}
+
+{% block body %}
+  <h2>Your chat with {{ to_user }}</h2>
+
+  {% for message in chat %}
+    {% if message.from_user == user %}
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="container text-right">
+      <div class="alert alert-success" style="width:1000px">
+          {{ message.message }}
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+
+    {% else %}
+      <div class="alert alert-info" style="width:1000px">
+        {{ message.message }}
+      </div>
+    {% endif %}
+  {% endfor %}
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom">
+  <div class="mx-auto order-0">
+  <form class="form-inline" action="{% url 'cabshare:messagesave' to_user.pk %}" method="get" >
+    <input class="form-control mr-sm-2" type="text" style="width:1500px" placeholder="Enter Message" name="message" value="{{ request.GET.message }}">
+    <button class="btn btn-default" type="submit" style="background-color:white" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-send" style="font-size:24px"></i></button>
+  </form>
+  </div>
+</nav>
+{% endblock %}

@@ -7,6 +7,13 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'cabshare/form-template.html' %}
+      <!-- <p><label for="id_date_of_journey">Date of Journey   : &nbsp; </label><input type="date" name="date" id="id_date_of_journey"></p>
+      <p><label for="id_time">Time              : &nbsp; </label><input type="time" name="time" id="id_time"></p>
+      <p><label for="id_destination">Destination       : &nbsp; </label><input type="text" name="destination" id="id_destination"></p>
+      <p><label for="id_amount_of_luggage">Amount of Luggage : &nbsp; </label><input type="text" name="luggage" id="id_amount_of_luggage"></p>
+      <p><label for="id_budget">Budget            : &nbsp; </label><input type="text" name="budget" id="id_budget"></p>
+      <p><label for="id_special_note">Special Note      : &nbsp; </label><input type="text" name="special_note" id="id_special_note"></p> -->
+
     <div class="form-group row">
       <div class="col-sm-10">
         <button type="submit" class="btn btn-success">Submit</button>
@@ -14,4 +21,16 @@
     </div>
   </form>
 </div>
+
+
+<!-- For datepicker -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$( function() {
+  $( "#" ).datepicker();
+} );
+</script >
+<!-- Till here -->
 {% endblock %}

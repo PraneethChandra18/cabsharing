@@ -1,0 +1,150 @@
+{% extends 'cabshare/base.html' %}
+
+{% block title %} Profile {% endblock %}
+
+{% block body %}
+<h1> Welcome {{ user.username }} !!</h1>
+
+<h2> Your Requests </h2>
+
+{% if bookings %}
+
+  <div class="row">
+  <!-- row attribute along with col attribute below keeps cards in horizontal order -->
+  {% for booking in bookings %}
+  {% if booking.is_active %}
+      <div class="col-sm-12 col-lg-3">
+        <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
+        <!-- col-lg-num -> here num decides the gap between cards -->
+        <div class="card h-100" style="width:400px">
+          <div class="card-body">
+            <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+            <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> Destination : {{ booking.destination }} </p>
+            <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+            <p class="card-text"> Budget : {{ booking.budget }} </p>
+            <p class="card-text"> Booking created by <a href="{% url 'account:profile-another-user' booking.user.pk %}">{{ booking.user.username }}</a> </p>
+
+            {% if requests %}
+              {% for request in requests %}
+                {% if request.to_booking == booking %}
+                  {% if not request.accept %}
+                    <a href="{% url 'cabshare:cancelrequest' request.pk %}"><button type="button" class="btn btn-primary">Cancel Request</button> </a>
+                  {% else %}
+                  <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item" href="{% url 'cabshare:cancelrequest' request.pk %}">Untag</a>
+                    </div>
+                  </div>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            <br/>
+            <a href="{% url 'cabshare:chat' booking.user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a>
+
+          </div>
+          <div class="card-footer">
+             You are going together with .... <a href="{% url 'account:profile-another-user' booking.user.pk %}">{{ booking.user.username }}</a>
+            {% for request in re %}
+              {% if request.to_booking == booking %}
+                {% if request.accept %}
+                  {% if request.from_user != user %}
+                   <a href="{% url 'account:profile-another-user' request.from_user.pk %}">,{{ request.from_user }}</a>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+      {% endif %}
+  {% endfor %}
+  </div>
+{% else %}
+  <h3>No Requests</h3>
+{% endif %}
+
+<h2> Previous Requests</h2>
+{% if bookings %}
+
+  <div class="row">
+  <!-- row attribute along with col attribute below keeps cards in horizontal order -->
+  {% for booking in bookings %}
+  {% if not booking.is_active %}
+      <div class="col-sm-12 col-lg-3">
+        <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
+        <!-- col-lg-num -> here num decides the gap between cards -->
+        <div class="card h-100" style="width:400px">
+          <div class="card-body">
+            <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+            <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> Destination : {{ booking.destination }} </p>
+            <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+            <p class="card-text"> Budget : {{ booking.budget }} </p>
+            <p class="card-text"> Booking created by <a href="{% url 'account:profile-another-user' booking.user.pk %}">{{ booking.user.username }}</a> </p>
+
+            {% if requests %}
+              {% for request in requests %}
+                {% if request.to_booking == booking %}
+                  {% if not request.accept %}
+                    <a href="{% url 'cabshare:cancelrequest' request.pk %}"><button type="button" class="btn btn-primary">Cancel Request</button> </a>
+                  {% else %}
+                  <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item" href="{% url 'cabshare:cancelrequest' request.pk %}">Untag</a>
+                    </div>
+                  </div>
+                  {% endif %}
+                  <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{request.pk}}"><i class='fas fa-trash-alt'></i> Delete </button>
+                  <div class="modal" id="myModal{{request.pk}}">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title"> Deleting request </h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+
+                        <div class="modal-body"> Are you sure to delete this request? </div>
+
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
+                          <a href="{% url 'cabshare:cancelrequest' request.pk %}"> <button type="button" class="btn btn-danger"> Delete Request </button> </a>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+          </div>
+          <div class="card-footer">
+             You travelled together with .... <a href="{% url 'account:profile-another-user' booking.user.pk %}">{{ booking.user.username }}</a>
+            {% for request in re %}
+              {% if request.to_booking == booking %}
+                {% if request.accept %}
+                  {% if request.from_user != user %}
+                   <a href="{% url 'account:profile-another-user' request.from_user.pk %}">,{{ request.from_user }}</a>
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+      {% endif %}
+  {% endfor %}
+  </div>
+{% else %}
+  <h3>No Requests</h3>
+{% endif %}
+
+
+{% endblock %}

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" />
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>{% block title %}CabShare{% endblock %}</title>
   </head>
   <body>
@@ -19,17 +20,12 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="topNavbar">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class='fas fa-compact-disc'></i> Albums &nbsp;</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class='fas fa-music'></i> Songs &nbsp;</a>
-          </li>
-        </ul>
         <div class="mx-auto order-0">
-          <form class="form-inline" action="#" >
-            <input class="form-control mr-sm-2" type="text" placeholder="Search suitable bookings">
+          <form class="form-inline" action="{% url 'cabshare:search' %}" role="search" method="get" >
+            <input class="form-control mr-sm-2" type="text" placeholder="Search for your destination" name="destination" value="{{ request.GET.destination }}">
+            <input class="form-control mr-sm-2" type="date" name="date" value="{{ request.GET.date}}">
+            <!-- <input class="form-control mr-sm-2" type="time" name="time" value="{{ request.GET.time}}"> -->
+
             <button class="btn btn-default" type="submit" style="background-color:white">Search</button>
           </form>
         </div>
@@ -43,11 +39,13 @@
             <a class="nav-link" href="{% url 'cabshare:booking-add' %}" data-toggle="tooltip" data-placement="bottom" title=" New Booking"><i class='fas fa-plus'></i>&nbsp;</a>
           </li>
 
-          <li class="nav-item dropdown dropleft">
+          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><i class='fas fa-user'></i>&nbsp;</a>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu dropdown-menu-right">
               <a class="dropdown-item" href="{% url 'account:profile-view' %}">Profile</a>
               <a class="dropdown-item" href="{% url 'cabshare:my_bookings' %}">My Bookings</a>
+              <a class="dropdown-item" href="{% url 'cabshare:myrequests' %}">My Requests</a>
+              <a class="dropdown-item" href="#">My Chats</a>
               <a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a>
             </div>
           </li>

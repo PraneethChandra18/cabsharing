@@ -5,6 +5,7 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import User_profile
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 
 def home(request):
     return render(request,'account/home.html')
@@ -46,7 +47,7 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request,user)
-                return redirect('cabshare:index')
+                return redirect('account:login-redirect')
         else:
             return render(request,'account/login_form.html',{'form':form})
     else:
@@ -56,16 +57,6 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect('account:login')
-
-def details(request):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    else:
-        user_profile = User_profile.objects.get(user = request.user)
-        context = {
-        'user_profile':user_profile
-        }
-        return render(request,'account/detail.html',context)
 
 def loginredirect(request):
     try:
@@ -86,3 +77,24 @@ class ProfileCreate(LoginRequiredMixin, CreateView):
 class ProfileUpdate(LoginRequiredMixin, UpdateView):
     model = User_profile
     fields= ['name','photo','date_of_birth','hostel','department','gender','bio']
+
+def details(request):
+    if not request.user.is_authenticated:
+        return redirect('account:login')
+    else:
+        user_profile = User_profile.objects.get(user = request.user)
+        context = {
+        'user_profile':user_profile
+        }
+        return render(request,'account/detail.html',context)
+
+def profile(request,pk):
+    if not request.user.is_authenticated:
+        return redirect('account:login')
+    else:
+        user = User.objects.get(pk=pk)
+        user_profile = User_profile.objects.get(user = user)
+        context = {
+        'user_profile':user_profile
+        }
+        return render(request,'account/detail.html',context)
