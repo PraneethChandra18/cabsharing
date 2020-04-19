@@ -21,7 +21,7 @@
                <td>
                  <a href="{% url 'cabshare:chat' request.from_user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  {% if not request.accept %}
-                   <a href="{% url 'cabshare:acceptrequest' request.pk %}"><button type="button" class="btn btn-primary">Accept</button></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   <button type="button" class="btn btn-primary" id="accept" name="{{request.pk}}" value="{{ request.from_user.pk }}">Accept</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                    <a href="{% url 'cabshare:ignorerequest' request.pk %}"> <button type="button" class="btn btn-secondary"> Ignore </button> </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  {% else %}
                     <div class="dropdown">
@@ -42,4 +42,24 @@
   {% else %}
       <h2>No requests yet</h2>
   {% endif %}
+
+  <script>
+    $("#accept").click(function () {
+        var input = $(this).attr('name');
+
+        $.ajax({
+            url: "{% url 'cabshare:acceptrequest' %}",
+            data: {
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              'inputValue': input
+            },
+            dataType: 'json',
+            success: function (data) {
+              window.location.reload();
+            }
+          });
+
+        });
+  </script>
+
 {% endblock %}

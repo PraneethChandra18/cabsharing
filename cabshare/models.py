@@ -32,3 +32,8 @@ class Chat(models.Model):
     from_user = models.ForeignKey(User,on_delete=models.CASCADE,default=1,related_name='from_user')
     to_user = models.ForeignKey(User,on_delete=models.CASCADE,default=1,related_name='to_user')
     message = models.TextField()
+
+class Notification(models.Model):
+    to_user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
+    type = models.CharField(max_length=10,default="request")
+    notification = models.TextField()

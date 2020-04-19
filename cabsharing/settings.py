@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+#channels
+    'channels',
 #Social-Auth
     'social_django',
 ]
@@ -83,8 +85,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'cabsharing.wsgi.application'
-
-
+#Channels
+ASGI_APPLICATION = "cabsharing.routing.application"
+#Redis (Channel Layers)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

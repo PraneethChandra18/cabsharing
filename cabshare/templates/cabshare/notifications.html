@@ -1,0 +1,53 @@
+{% extends 'cabshare/base.html' %}
+
+{% block title %} Notifications {% endblock %}
+
+{% block body %}
+<div class="card" style="height:700px" id="overflow">
+<div id="chat" class="card-body" style="background-color:white">
+  <div class="alert alert-info">
+    * Notifications once <strong>read</strong> will be <strong>deleted!</strong>
+  </div>
+  <div align="right">
+    <a href="{% url 'cabshare:notification-delete-all' %}"><button type="button" class="btn btn-danger">Delete all</button></a>
+  </div>
+  {% if notifications %}
+    <div class="table-responsive">
+       <table class="table table-hover">
+         <thead style="border-color:white">
+           <tr>
+             <th>No.</th>
+             <th>Notifications</th>
+           </tr>
+         </thead>
+         <tbody>
+           {% for notification in notifications %}
+             <tr>
+               <td> {{ forloop.counter }} </td>
+               {% if notification.type == "request" %}
+                <td> <a href="{% url 'cabshare:show_notification' notification.pk %}" target="_blank">{{ notification.notification }}</a></td>
+               {% elif notification.type == "accept" %}
+                <td> </td>
+               {% else %}
+                <td> Nothing </td>
+               {% endif %}
+             </tr>
+            {% endfor %}
+         </tbody>
+       </table>
+     </div>
+
+  {% else %}
+    <h3> No new notifications to show </h3>
+  {% endif %}
+</div>
+</div>
+
+  <script type="text/javascript">
+
+    onload = function() {
+      document.getElementById("overflow").style.overflow = "auto";
+    };
+
+  </script>
+{% endblock %}

@@ -15,16 +15,19 @@ urlpatterns = [
     # path('active/',views.isactive,name='isactive'),
     path('search/',views.search,name='search'),
     path('results/<int:pk>/',views.results,name='results'),
-    path('joinrequest/<int:pk>/',views.joinrequest,name='joinrequest'),
-    path('cancelrequest/<int:pk>/',views.cancelrequest,name='cancelrequest'),
+    path('joinrequest/',views.joinrequest,name='joinrequest'),
+    path('cancelrequest/',views.cancelrequest,name='cancelrequest'),
     path('viewrequest/<int:pk>/',views.viewrequests,name='booking-viewrequests'),
-    path('acceptrequest/<int:pk>/',views.acceptrequest,name='acceptrequest'),
+    path('acceptrequest/',views.acceptrequest,name='acceptrequest'),
     path('ignorerequest/<int:pk>/',views.ignorerequest,name='ignorerequest'),
     path('myrequests/',views.myrequests,name='myrequests'),
     path('chat/<int:pk>',views.chat,name='chat'),
+    path('chat/delete/<int:pk>',views.deletechat,name='delete-chat'),
     path('messagesave/<int:pk>',views.messagesave,name='messagesave'),
-
-
+    path('mychats/',views.mychats,name='mychats'),
+    path('notifications/',views.notifications,name='notifications'),
+    path('notifications/delete_all',views.notify_delete_all,name='notification-delete-all'),
+    path('notification/show/<int:pk>',views.show_notification,name='show_notification'),
 
 
 

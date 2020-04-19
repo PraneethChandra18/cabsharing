@@ -3,90 +3,116 @@
 {% block title %} Profile {% endblock %}
 
 {% block body %}
-  <h2>Your chat with {{ to_user }}</h2>
+  <h2>Your chat with {{ to_user }}</h2>{{ to_user.pk | json_script:"to-user-pk" }}{{ user.pk | json_script:"from-user-pk" }}
+  <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{to_user.pk}}"><i class='fas fa-trash-alt'></i> Delete Chat </button>
+  <div class="modal" id="myModal{{to_user.pk}}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"> Delete Chat </h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
 
-  {% for message in chat %}
+        <div class="modal-body"> Are you sure to delete this chat? </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
+          <a href="{% url 'cabshare:delete-chat' to_user.pk %}"> <button type="button" class="btn btn-danger"> Delete </button> </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div style="display:none">
+  <input type="text" id="to_user_pk" value="{{to_user.pk}}">
+  <input type="text" id="from_user_pk" value="{{user.pk}}">
+  <button id="bottom" onclick="scrollbottom()"></button>
+  </div>
+
+<div class="card" style="height:700px" id="overflow">
+<div id="chat" class="card-body" style="background-color:white">
+{% for message in chat %}
+  <div class="row">
     {% if message.from_user == user %}
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="container text-right">
-      <div class="alert alert-success" style="width:1000px">
-          {{ message.message }}
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
+        <div class="col"></div>
+        <div class="col" align="right">
+          <div class="card" style="width:50%">
+                 <div class="card-body text-left" style="background-color:#3CB371">{{ message.message }}</div>
+          </div>
+        </div>
 
     {% else %}
-      <div class="alert alert-info" style="width:1000px">
-        {{ message.message }}
+      <div class="col">
+        <div class="card" style="width:50%">
+               <div class="card-body text-left" style="background-color:#ADD8E6">{{ message.message }}</div>
+        </div>
       </div>
+      <div class="col"></div>
+
     {% endif %}
-  {% endfor %}
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom">
-  <div class="mx-auto order-0">
-  <form class="form-inline" action="{% url 'cabshare:messagesave' to_user.pk %}" method="get" >
-    <input class="form-control mr-sm-2" type="text" style="width:1500px" placeholder="Enter Message" name="message" value="{{ request.GET.message }}">
-    <button class="btn btn-default" type="submit" style="background-color:white" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-send" style="font-size:24px"></i></button>
-  </form>
-  </div>
-</nav>
+      </div>
+{% endfor %}
+</div>
+</div>
+
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom">
+    <div class="mx-auto order-0">
+    <form id="chatform" class="form-inline" >
+      <input class="form-control mr-sm-2" type="text" style="width:1500px" placeholder="Enter Message" id="message" name="message">
+      <button class="btn btn-default" type="submit" style="background-color:white" data-toggle="tooltip" data-placement="top" title="Send"><i class="fa fa-send" style="font-size:24px"></i></button>
+    </form>
+    </div>
+  </nav>
+
+
+<script type="text/javascript">
+    const touserpk = JSON.parse(document.getElementById('to-user-pk').textContent);
+    const fromuserpk = JSON.parse(document.getElementById('from-user-pk').textContent);
+    const chatSocket = new WebSocket('ws://'+ window.location.host+ '/ws/chat/'+ touserpk + '/');
+
+    chatSocket.onmessage = function(message) {
+        var d = JSON.parse(message.data);
+        var chat = $("#chat")
+        var from_pk = $('#from_user_pk').val()
+        var to_pk = $('#to_user_pk').val()
+        var html=''
+        if(d.from_user == from_pk)
+        {
+          html = '<div class="row"><div class="col"></div><div class="col" align="right"><div class="card" style="width:50%"><div class="card-body text-left" style="background-color:#3CB371">'
+            + d.message + '</div></div></div></div>'
+        }
+        else {
+            html =   '<div class="row"><div class="col"><div class="card" style="width:50%"><div class="card-body text-left" style="background-color:#ADD8E6">'+d.message+
+            '</div></div></div><div class="col"></div></div>'
+
+        }
+
+        chat.append(html)
+        scrollbottom();
+    };
+
+     $("#chatform").on("submit", function(event) {
+     var data = {
+         from_user: $('#from_user_pk').val(),
+         to_user: $('#to_user_pk').val(),
+         message: $('#message').val(),
+     }
+     chatSocket.send(JSON.stringify(data));
+     $("#message").val('').focus();
+     return false;
+    });
+
+
+    onload = function() {
+      document.getElementById("overflow").style.overflow = "auto";
+      document.getElementById("bottom").click();
+    };
+
+    function scrollbottom(){
+    var objDiv = document.getElementById("overflow");
+    objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+
+</script>
 {% endblock %}

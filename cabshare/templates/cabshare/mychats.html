@@ -1,0 +1,12 @@
+{% extends 'cabshare/base.html'%}
+
+{% block title%} My Bookings {% endblock %}
+
+{% block body %}
+  <div class="list-group">
+      {% for u in with_users %}
+        <a href="{% url 'cabshare:chat' u.pk %}" class="list-group-item list-group-item-action list-group-item-secondary "><i class='fas fa-user'></i> {{ u.username }}</a>
+      {% endfor %}
+  </div>
+
+{% endblock %}

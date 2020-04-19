@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Booking,Current_Booking,Request,Chat
+from .models import Booking,Current_Booking,Request,Chat,Notification
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -12,7 +12,8 @@ import datetime
 import time
 from threading import Timer
 from django.db.models import Q
-
+import json
+from django.http import JsonResponse
 
 def index(request):
     if not request.user.is_authenticated:
@@ -170,18 +171,27 @@ def results(request,pk):
     else:
         return render(request,'cabshare/error.html')
 # ---------------------------------------------------------------------------------------------------------------------
-def joinrequest(request,pk):
+def joinrequest(request):
+    pk = request.GET.get('inputValue')
     to_booking = Booking.objects.get(pk=pk)
     from_user = request.user
+    r = Request(from_user=from_user,to_booking=to_booking)
+    r.save()
+    data = {
+        'pk': r.pk
+            }
+    return JsonResponse(data)
 
-    request = Request(from_user=from_user,to_booking=to_booking)
-    request.save()
-    return redirect('cabshare:myrequests')
-
-def cancelrequest(request,pk):
+def cancelrequest(request):
+    pk = request.GET.get('inputValue')
     r = Request.objects.get(pk=pk)
     r.delete()
-    return redirect('cabshare:myrequests')
+    print(pk)
+    data = {
+        'pk': pk
+            }
+
+    return JsonResponse(data)
 
 def myrequests(request):
     user = request.user
@@ -204,13 +214,18 @@ def viewrequests(request,pk):
 
     return render(request,'cabshare/viewrequests.html',{'requests':r})
 
-def acceptrequest(request,pk):
+def acceptrequest(request):
+    pk = request.GET.get('inputValue')
     re = Request.objects.get(pk=pk)
     re.accept = True
     re.save()
     to_booking = re.to_booking
     r = Request.objects.filter(to_booking=to_booking)
-    return render(request,'cabshare/viewrequests.html',{'requests':r})
+    data = {
+        'pk': pk
+            }
+
+    return JsonResponse(data)
 
 def ignorerequest(request,pk):
     re = Request.objects.get(pk=pk)
@@ -239,4 +254,46 @@ def messagesave(request,pk):
     new_message.message = message
     new_message.save()
     return redirect('cabshare:chat',pk)
+
+def deletechat(request,pk):
+    from_user = request.user
+    to_user = User.objects.get(pk=pk)
+    chat = Chat.objects.filter(from_user=from_user,to_user=to_user) | Chat.objects.filter(from_user=to_user,to_user=from_user)
+
+    for c in chat:
+        c.delete()
+    return redirect('cabshare:chat',pk)
 # -------------------------------------------------------------------------------------------------------------------------
+
+def mychats(request):
+    user = request.user
+    chat = Chat.objects.filter(from_user=user) | Chat.objects.filter(to_user=user)
+    chat = chat.order_by('-pk')
+    with_users = []
+
+    for message in chat:
+        if message.from_user == user:
+            if not message.to_user in with_users:
+                with_users.append(message.to_user)
+        else:
+            if not message.from_user in with_users:
+                with_users.append(message.from_user)
+    return render(request,'cabshare/mychats.html',{'with_users':with_users})
+# -------------------------------------------------------------------------------------------------------------------------
+
+def notifications(request):
+    user = request.user
+    notifications = Notification.objects.filter(to_user=user)
+    return render(request,'cabshare/notifications.html',{'notifications':notifications})
+
+def show_notification(request,pk):
+    n = Notification.objects.get(pk=pk)
+    n.delete()
+    return redirect('cabshare:my_bookings')
+
+def notify_delete_all(request):
+    user = request.user
+    notifications = Notification.objects.filter(to_user=user)
+    for n in notifications:
+        n.delete()
+    return redirect('cabshare:notifications')

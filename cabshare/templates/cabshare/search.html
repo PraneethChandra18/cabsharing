@@ -3,6 +3,10 @@
 {% block title%} My Bookings {% endblock %}
 
 {% block body %}
+<div style="display:none">
+<input type="text" id="from_user_pk" value="{{user.pk}}">
+</div>
+
 <h2> Suitable bookings for you </h2>
   {% if result %}
 
@@ -25,17 +29,22 @@
                 {% for request in requests %}
                   {% if request.to_booking == booking %}
                     {% if not request.accept %}
-                      <a href="{% url 'cabshare:cancelrequest' booking.pk %}"><button type="button" class="btn btn-primary">Cancel Request</button> </a>
+                      <span id="unjoin"><button type="button" class="btn btn-primary" id="cancel" value="{{request.pk}}">Cancel Request</button></span>
                     {% else %}
-                      <a href="#"><button type="button" class="btn btn-primary">Joined</button> </a>
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                          <a class="dropdown-item" href="#"><span id="unjoin"><button type="button" class="btn btn-light" id="untag" value="{{request.pk}}">Untag</button></span></a>
+                        </div>
+                      </div>
                     {% endif %}
                   {% endif %}
                 {% endfor %}
                 {% if not booking in to_bookings %}
-                  <a href="{% url 'cabshare:joinrequest' booking.pk %}"><button type="button" class="btn btn-primary">Request to join</button> </a>
+                  <span id="join"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request" value="{{ booking.user.pk }}">Request to join</button> </span>
                 {% endif %}
               {% else %}
-                <a href="{% url 'cabshare:joinrequest' booking.pk %}"><button type="button" class="btn btn-primary">Request to join</button> </a>
+                <span id="join"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request" value="{{ booking.user.pk }}">Request to join</button> </span>
               {% endif %}
 
             </div>
@@ -46,4 +55,57 @@
   {% else %}
     <h3>No Bookings</h3>
   {% endif %}
+
+  <script>
+    $("#request").click(function () {
+        var input = $(this).attr('name');
+
+        $.ajax({
+            url: "{% url 'cabshare:joinrequest' %}",
+            data: {
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              'inputValue': input
+            },
+            dataType: 'json',
+            success: function (data) {
+              html = "You can cancel the request anytime in your myrequests page"
+              document.getElementById('join').innerHTML = html;
+            }
+          });
+        });
+
+    $("#cancel").click(function () {
+        var input = $(this).attr('value');
+
+        $.ajax({
+            url: '{% url 'cabshare:cancelrequest' %}',
+            data: {
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              'inputValue': input
+            },
+            dataType: 'json',
+            success: function (data) {
+              html = 'Refresh the page to see "Request to join option"'
+              document.getElementById('unjoin').innerHTML = html;
+            }
+          });
+        });
+    $("#untag").click(function () {
+        var input = $(this).attr('value');
+
+        $.ajax({
+            url: "{% url 'cabshare:cancelrequest' %}",
+            data: {
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              'inputValue': input
+            },
+            dataType: 'json',
+            success: function (data) {
+              window.location.reload();
+            }
+          });
+        });
+
+  </script>
+
 {% endblock %}
