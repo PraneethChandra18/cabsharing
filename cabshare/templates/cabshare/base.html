@@ -34,7 +34,16 @@
 <!-- <ul class="navbar-nav ml-auto justify-content-end">    ->Can also use this to make it align right-->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'cabshare:notifications' %}" data-toggle="tooltip" data-placement="bottom" title="Notifications"><span id="notifier"><i class="material-icons">notifications</i></span>&nbsp;</a>
+            <a class="nav-link" href="{% url 'cabshare:notifications' %}" data-toggle="tooltip" data-placement="bottom" title="Notifications">
+              <i class="material-icons">notifications</i>
+                <span id="notifier">
+                  {% if notifications_all.count %}
+                    <span class="badge badge-pill badge-danger">
+                        {{ notifications_all.count }}
+                    </span>&nbsp;
+                  {% endif %}
+                </span>
+            </a>
           </li>
 
           <li class="nav-item">
@@ -58,41 +67,68 @@
       {% block body %}
       {% endblock %}
     </div>
+<div style="display:none">
+  <input type="text" id="notification_count" value="{{ notifications_all.count }}">
+</div>
 
     <script type="text/javascript">
       const notificationSocket = new WebSocket('ws://'+ window.location.host+ '/ws/notification/');
-
       notificationSocket.onmessage = function(message) {
           var d = JSON.parse(message.data);
           var from_pk = {{user.pk}};
-          if(d.to_user == from_pk)
+          var ct = document.getElementById("notification_count")
+          var count = Number(ct.value)
+          count = count + 1
+          ct.value = count.toString()
+          html = '<span class="badge badge-pill badge-danger">'+ count +'</span>&nbsp;'
+          if(d.to_user == from_pk && d.type!="message")
           {
-            $("#notifier").append("<i class='fas fa-dot-circle' style='color:red'></i>")
+            document.getElementById("notifier").innerHTML = html
           }
+          if(d.type=="message")
+          {
+            var s = document.getElementById(d.from_user)
+            var x = Number(s.value);
+            x=x+1
+            s.value = x.toString()
+            document.getElementById(d.from_user).innerHTML = '<span class="badge badge-pill badge-success">'+ x +'</span>&nbsp;'
+          }
+
       };
 
-       $("#request").click(function() {
-          var data = {
-              from_user: $('#from_user_pk').val(),
-              type: "request",
-              to_user: $(this).attr('value'),
-              message: "Request to join you on your ride",
-          }
-          notificationSocket.send(JSON.stringify(data));
-          return false;
-      });
+     function request(d) {
+        var data = {
+            from_user: $('#from_user_pk').val(),
+            type: "request",
+            to_user: d.getAttribute('value'),
+            message: "Request to join you on your journey",
+        }
+        notificationSocket.send(JSON.stringify(data));
+        return false;
+      }
 
-      $("#accept").click(function() {
-         var data = {
-             from_user: $('#from_user_pk').val(),
-             type: "accept",
-             to_user: $(this).attr('value'),
-             message: "Your request was accepted! Happy Journey!",
-         }
-         notificationSocket.send(JSON.stringify(data));
-         return false;
-     });
+     function accept(d) {
+        var st = $('#from_username').val()
+        var data = {
+            from_user: $('#from_user_pk').val(),
+            type: "accept",
+            to_user: d.getAttribute('value'),
+            message: "Your request to join "+ st +" was accepted! Happy Journey!",
+        }
+        notificationSocket.send(JSON.stringify(data));
+        return false;
+      }
 
+    $("#chatform").on("submit", function(event) {
+      var data = {
+        from_user: $('#from_user_pk').val(),
+        type: "message",
+        to_user: $('#to_user_pk').val(),
+        message: "You have a message",
+    }
+    notificationSocket.send(JSON.stringify(data));
+    return false;
+   });
     </script>
 
   </body>

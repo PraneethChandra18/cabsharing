@@ -90,8 +90,9 @@ class NotificationConsumer(WebsocketConsumer):
             to_user = User.objects.get(pk=to_user_pk)
             type = data['type']
             message = data['message']
-            if from_user_pk == self.user.pk:
-                c = Notification(to_user=to_user,type=type,notification=message)
-                c.save()
+            if type!="message":
+                if from_user_pk == self.user.pk:
+                    c = Notification(to_user=to_user,type=type,notification=message)
+                    c.save()
 
         self.send(text_data=json.dumps(data))

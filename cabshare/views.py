@@ -185,13 +185,29 @@ def joinrequest(request):
 def cancelrequest(request):
     pk = request.GET.get('inputValue')
     r = Request.objects.get(pk=pk)
+    booking = r.to_booking
+    booking_pk = booking.pk
+    booking_user_pk = booking.user.pk
     r.delete()
-    print(pk)
     data = {
-        'pk': pk
+        'booking_pk': booking_pk,
+        'booking_user_pk': booking_user_pk
             }
 
     return JsonResponse(data)
+
+# def joinrequest(request,pk):
+#     to_booking = Booking.objects.get(pk=pk)
+#     from_user = request.user
+#     r = Request(from_user=from_user,to_booking=to_booking)
+#     r.save()
+#     return redirect('cabshare:index')
+#
+# def cancelrequest(request,pk):
+#     r = Request.objects.get(pk=pk)
+#     r.delete()
+#
+#     return redirect('cabshare:index')
 
 def myrequests(request):
     user = request.user
@@ -211,8 +227,8 @@ def myrequests(request):
 def viewrequests(request,pk):
     to_booking = Booking.objects.get(pk=pk)
     r = Request.objects.filter(to_booking=to_booking)
-
-    return render(request,'cabshare/viewrequests.html',{'requests':r})
+    user = request.user
+    return render(request,'cabshare/viewrequests.html',{'requests':r,'user':user})
 
 def acceptrequest(request):
     pk = request.GET.get('inputValue')
@@ -227,6 +243,15 @@ def acceptrequest(request):
 
     return JsonResponse(data)
 
+# def acceptrequest(request,pk):
+#     re = Request.objects.get(pk=pk)
+#     re.accept = True
+#     re.save()
+#     to_booking = re.to_booking
+#     r = Request.objects.filter(to_booking=to_booking)
+#
+#     return render(request,'cabshare/viewrequests.html',{'requests':r})
+
 def ignorerequest(request,pk):
     re = Request.objects.get(pk=pk)
     to_booking = re.to_booking
@@ -239,6 +264,10 @@ def chat(request,pk):
     from_user = request.user
     to_user = User.objects.get(pk=pk)
     chat = Chat.objects.filter(from_user=from_user,to_user=to_user) | Chat.objects.filter(from_user=to_user,to_user=from_user)
+    ch = chat.filter(to_user=from_user,seen=False)
+    for c in ch:
+        c.seen = True
+        c.save()
 
     chat = chat.order_by('pk')
     return render(request,'cabshare/chat.html',{'chat':chat,'to_user':to_user,'user':from_user})
@@ -278,18 +307,24 @@ def mychats(request):
         else:
             if not message.from_user in with_users:
                 with_users.append(message.from_user)
-    return render(request,'cabshare/mychats.html',{'with_users':with_users})
+
+    with_users_dict = {}
+    for u in with_users:
+        c = Chat.objects.filter(from_user=u,to_user=user,seen=False).count()
+        with_users_dict[u]=c
+
+    return render(request,'cabshare/mychats.html',{'with_users_dict':with_users_dict})
 # -------------------------------------------------------------------------------------------------------------------------
 
 def notifications(request):
     user = request.user
     notifications = Notification.objects.filter(to_user=user)
+    notifications = notifications.order_by('-pk')
+    notify=notifications.filter(seen=False)
+    for n in notify:
+        n.seen = True
+        n.save()
     return render(request,'cabshare/notifications.html',{'notifications':notifications})
-
-def show_notification(request,pk):
-    n = Notification.objects.get(pk=pk)
-    n.delete()
-    return redirect('cabshare:my_bookings')
 
 def notify_delete_all(request):
     user = request.user

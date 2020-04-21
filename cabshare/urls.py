@@ -27,7 +27,6 @@ urlpatterns = [
     path('mychats/',views.mychats,name='mychats'),
     path('notifications/',views.notifications,name='notifications'),
     path('notifications/delete_all',views.notify_delete_all,name='notification-delete-all'),
-    path('notification/show/<int:pk>',views.show_notification,name='show_notification'),
 
 
 

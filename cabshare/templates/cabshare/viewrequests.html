@@ -3,6 +3,11 @@
 {% block title%} My Bookings {% endblock %}
 
 {% block body %}
+<div style="display:none">
+<input type="text" id="from_user_pk" value="{{user.pk}}">
+<input type="text" id="from_username" value="{{user.username}}">
+</div>
+
   {% if requests %}
   <div class="card h-100">
     <div class="card-body">
@@ -21,7 +26,7 @@
                <td>
                  <a href="{% url 'cabshare:chat' request.from_user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  {% if not request.accept %}
-                   <button type="button" class="btn btn-primary" id="accept" name="{{request.pk}}" value="{{ request.from_user.pk }}">Accept</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   <button type="button" class="btn btn-primary" id="accept{{request.pk}}" name="{{request.pk}}" value="{{ request.from_user.pk }}" onclick="acceptrequest(this);accept(this);">Accept</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                    <a href="{% url 'cabshare:ignorerequest' request.pk %}"> <button type="button" class="btn btn-secondary"> Ignore </button> </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  {% else %}
                     <div class="dropdown">
@@ -44,8 +49,8 @@
   {% endif %}
 
   <script>
-    $("#accept").click(function () {
-        var input = $(this).attr('name');
+    function acceptrequest(d) {
+        var input = d.getAttribute('name');
 
         $.ajax({
             url: "{% url 'cabshare:acceptrequest' %}",
@@ -58,8 +63,7 @@
               window.location.reload();
             }
           });
-
-        });
+        }
   </script>
 
 {% endblock %}

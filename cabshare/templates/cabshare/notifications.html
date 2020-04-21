@@ -25,11 +25,11 @@
              <tr>
                <td> {{ forloop.counter }} </td>
                {% if notification.type == "request" %}
-                <td> <a href="{% url 'cabshare:show_notification' notification.pk %}" target="_blank">{{ notification.notification }}</a></td>
+                <td> <a href="{% url 'cabshare:my_bookings' %}">{{ notification.notification }}</a></td>
                {% elif notification.type == "accept" %}
-                <td> </td>
+                <td> <a href="{% url 'cabshare:myrequests' %}">{{ notification.notification }}</a></td>
                {% else %}
-                <td> Nothing </td>
+                <td> <a href="{% url 'cabshare:mychats' %}">{{ notification.notification }}</a> </td>
                {% endif %}
              </tr>
             {% endfor %}

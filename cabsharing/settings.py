@@ -79,6 +79,10 @@ TEMPLATES = [
                 #Social-Auth
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+
+                #to access model data from templates
+                'cabshare.context_processors.notifications_all',
+                'cabshare.context_processors.logged_in_user',
             ],
         },
     },

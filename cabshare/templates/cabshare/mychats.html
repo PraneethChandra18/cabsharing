@@ -4,8 +4,16 @@
 
 {% block body %}
   <div class="list-group">
-      {% for u in with_users %}
-        <a href="{% url 'cabshare:chat' u.pk %}" class="list-group-item list-group-item-action list-group-item-secondary "><i class='fas fa-user'></i> {{ u.username }}</a>
+      {% for u, v in with_users_dict.items %}
+        <a href="{% url 'cabshare:chat' u.pk %}" class="list-group-item list-group-item-action list-group-item-secondary"><i class='fas fa-user'></i> {{ u.username }}
+          <button id="{{u.pk}}" value="{{ v }}">
+          {% if v %}
+            <span class="badge badge-pill badge-success">
+              {{ v }}
+            </span>
+          {% endif %}
+        </button>
+        </a>
       {% endfor %}
   </div>
 
