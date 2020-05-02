@@ -3,8 +3,8 @@
 {% block title %} Profile {% endblock %}
 
 {% block body %}
-  <h2>Your chat with {{ to_user }}</h2>{{ to_user.pk | json_script:"to-user-pk" }}{{ user.pk | json_script:"from-user-pk" }}
-  <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{to_user.pk}}"><i class='fas fa-trash-alt'></i> Delete Chat </button>
+  <h2 style="color:white;">Your chat with {{ to_user }}</h2>{{ to_user.pk | json_script:"to-user-pk" }}{{ user.pk | json_script:"from-user-pk" }}
+  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{to_user.pk}}"><i class='fas fa-trash-alt'></i> Delete Chat </button>
   <div class="modal" id="myModal{{to_user.pk}}">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -29,8 +29,8 @@
   <button id="bottom" onclick="scrollbottom()"></button>
   </div>
 
-<div class="card" style="height:700px" id="overflow">
-<div id="chat" class="card-body" style="background-color:white">
+<div class="card" style="height:75vh;background: rgba(6, 4, 4, 0.6);" id="overflow">
+<div id="chat" class="card-body" >
 {% for message in chat %}
   <div class="row">
     {% if message.from_user == user %}

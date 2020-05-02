@@ -3,7 +3,13 @@
 {% block title%} Add Details {% endblock %}
 
 {% block body %}
-<div class="card-body" style="background-color:white">
+<style>
+.card-body {
+  background: rgba(6, 4, 4, 0.6);
+ }
+</style>
+
+<div class="card-body" style="width:1000px">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'account/form-template.html' %}

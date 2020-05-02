@@ -1,13 +1,104 @@
-{% extends 'account/basehome.html'%}
+ <!DOCTYPE html>
+ <html lang="en" dir="ltr">
+   <head>
+     <meta charset="utf-8">
+     {% load static %}
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+     <!-- <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" /> -->
+     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <title>{% block title %}CabShare{% endblock %}</title>
+     <style>
+  /* Make the image fully responsive */
+    .carousel-inner img {
+        width: 100%;
+        height: 100%;
+    }
+    .carousel-indicators li {
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    }
 
-{% block body %}
+    .carousel-caption {
+      top: 100px;
+      color: black;
+    }
 
-<div class="jumbotron jumbotron-fluid">
-  <div class="container">
-    <h1> Welcome !! </h1>
-    <h2> Please SignUp/Login to experience this amazing app </h2>
-  </div>
-</div>
+    </style>
+   </head>
+   <body>
+     <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+       <a class="navbar-brand" href="#"><span style="font-family:American Typewriter, serif"><img src="{% static 'account/logo.jpg' %}" alt="logo" style="height:40px; width: 200px;"></span></a>
+       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+         <span class="navbar-toggler-icon"></span>
+       </button>
+       <div class="collapse navbar-collapse" id="topNavbar">
+ <!-- <ul class="navbar-nav ml-auto justify-content-end">    ->Can also use this to make it align right-->
+         <ul class="navbar-nav ml-auto justify-content-end">
+           <li class="nav-item">
+             <a class="nav-link" href="{% url 'account:login' %}"><button type="button" class="btn btn-success">Login</button></a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" href="{% url 'account:register' %}"> <button type="button" class="btn btn-success">SignUp</button> </a>
+           </li>
+         </ul>
+       </div>
+     </nav>
+     <div class="container-fluid" style="margin-top:80px">
+       <div id="demo" class="carousel slide" data-ride="carousel" data-interval="2500">
 
+         <!-- Indicators -->
+         <ul class="carousel-indicators">
+           <li data-target="#demo" data-slide-to="0" class="active"></li>
+           <li data-target="#demo" data-slide-to="1"></li>
+           <li data-target="#demo" data-slide-to="2"></li>
+           <li data-target="#demo" data-slide-to="3"></li>
+         </ul>
 
- {% endblock %}
+         <!-- The slideshow -->
+         <div class="carousel-inner">
+           <div class="carousel-item active">
+             <img src="{% static 'account/taxi.webp' %}" alt="Taxi" style="height:700px; width: 100%;">
+              <div class="carousel-caption" style="top:80px;color:white;">
+                <h1> Before booking a cab, use this app to know who wants to tag you along on your journey. </h1>
+              </div>
+           </div>
+           <div class="carousel-item">
+             <img src="{% static 'account/friends.jpg' %}" alt="Friends" style="height:700px; width: 100%;">
+             <div class="carousel-caption d-none d-md-block" style="top:450px;color:black;" >
+               <h2 style="font-size:75px;"> No need to go alone anymore. </h2>
+               <h4>With this app, you can join other people who wants to go to same location as yours.</h4>
+             </div>
+           </div>
+           <div class="carousel-item" >
+             <img src="{% static 'account/savemoney.jpg' %}" alt="Save Money" style="height:700px; width: 100%;">
+             <div class="carousel-caption" style="top:0px;left:20px;right:auto;color:black;">
+               <h1 style="font-size:75px;">Share Cost, Save Money</h1>
+               <h4> Share cost with your friends and save money.</h4>
+             </div>
+           </div>
+           <div class="carousel-item">
+             <img src="{% static 'account/IIT-Guwahati.jpg' %}" alt="IITG" style="height:700px; width: 100%;">
+             <div class="carousel-caption" style="top:100px;color:black;">
+               <h2 style="font-size:75px;"> Exclusively for IITG </h2>
+             </div>
+           </div>
+
+         </div>
+
+         <!-- Left and right controls -->
+         <a class="carousel-control-prev" href="#demo" data-slide="prev">
+           <span class="carousel-control-prev-icon"></span>
+         </a>
+         <a class="carousel-control-next" href="#demo" data-slide="next">
+           <span class="carousel-control-next-icon"></span>
+         </a>
+       </div>
+
+     </div>
+   </body>
+ </html>

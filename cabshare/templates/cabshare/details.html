@@ -3,7 +3,8 @@
 {% block title%} My Bookings {% endblock %}
 
 {% block body %}
-<h2> Current Bookings </h2>
+<div style="height:85vh;" id="overflow">
+<h2 style="color:white;"> Current Bookings </h2>
 {% if bookings %}
 
   <div class="row">
@@ -14,8 +15,8 @@
       <div class="col-sm-12 col-lg-3">
         <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
         <!-- col-lg-num -> here num decides the gap between cards -->
-        <div class="card h-100" style="width:400px">
-          <div class="card-body">
+        <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+          <div class="card-body" style="color:white">
             <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
             <p class="card-text"> Time : {{ booking.time }} </p>
             <p class="card-text"> Destination : {{ booking.destination }} </p>
@@ -23,8 +24,8 @@
             <p class="card-text"> Budget : {{ booking.budget }} </p>
             <a href="{% url 'cabshare:booking-viewrequests' booking.id %}" class="btn btn-primary">View Requests &nbsp;</a>
 
-            <a href="{% url 'cabshare:booking-update' booking.id %}" class="btn btn-outline-dark"><i class='fas fa-edit'></i>Edit &nbsp;</a>
-            <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Cancel </button>
+            <a href="{% url 'cabshare:booking-update' booking.id %}"><button type="button" class="btn btn-light"><i class='fas fa-edit'></i>Edit </button>&nbsp;</a>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Cancel </button>
             <div class="modal" id="myModal{{booking.pk}}">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -44,7 +45,7 @@
               </div>
             </div>
           </div>
-          <div class="card-footer">
+          <div class="card-footer" style="color:white">
              You are going together with ....
             {% for request in requests %}
               {% if request.to_booking == booking %}
@@ -57,16 +58,17 @@
 
         </div>
       </div>
+      <br>
     {% endif %}
   {% endfor %}
   </div>
 {% else %}
-  <h3>No Bookings</h3>
+  <h3 style="color:white;">No Bookings</h3>
 {% endif %}
 
 
-<h2> Previous Bookings </h2>
-<button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModaldelete"><i class='fas fa-trash-alt'></i> Delete All</button>
+<h2 style="color:white;"> Previous Bookings </h2>
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModaldelete"><i class='fas fa-trash-alt'></i> Delete All</button>
 <div class="modal" id="myModaldelete">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -96,14 +98,14 @@
       <div class="col-sm-12 col-lg-3">
         <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
         <!-- col-lg-num -> here num decides the gap between cards -->
-        <div class="card h-100" style="width:400px">
-          <div class="card-body">
+        <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+          <div class="card-body" style="color:white">
             <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
             <p class="card-text"> Time : {{ booking.time }} </p>
             <p class="card-text"> Destination : {{ booking.destination }} </p>
             <p class="card-text"> amount_of_luggage : {{ booking.amount_of_luggage }} </p>
             <p class="card-text"> Budget : {{ booking.budget }} </p>
-            <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Delete </button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Delete </button>
             <div class="modal" id="myModal{{booking.pk}}">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -124,7 +126,7 @@
             </div>
 
           </div>
-          <div class="card-footer">
+          <div class="card-footer" style="color:white">
              You travelled together with ....
             {% for request in requests %}
               {% if request.to_booking == booking %}
@@ -141,7 +143,14 @@
   {% endfor %}
   </div>
 {% else %}
-  <h3>No Bookings</h3>
+  <h3 style="color:white;">No Bookings</h3>
 {% endif %}
+</div>
 
+<script type="text/javascript">
+  onload = function() {
+    document.getElementById("overflow").style.overflow = "auto";
+  };
+
+</script>
 {% endblock %}

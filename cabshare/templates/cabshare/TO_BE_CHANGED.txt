@@ -1,0 +1,7 @@
+1. Notifications has to be directed to the respective view requests section directly.
+2. Chat is being deleted for both the user with delete option. It has to be changed.
+3. Search with time+-2. And also search with only destination and date and only destination.
+4. Giving options for from and to in Booking model.
+5. Forgot Password option.
+6. Better frontend, can always be done!
+7. "You and x others are going together" to view details.

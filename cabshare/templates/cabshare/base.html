@@ -11,25 +11,48 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'cabshare/style.css' %}" type="text/css" />
 
     <title>{% block title %}CabShare{% endblock %}</title>
   </head>
   <body>
+    <div class="modal" id="myModalsearch">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title"> Search </h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <form  action="{% url 'cabshare:search' %}" method="get">
+              <div class="form-group row">
+                <label for="search"> Destination  : </label>
+                <input type="text" placeholder="Search for your destination" id="search" name="destination" value="{{ request.GET.destination }}">
+              </div>
+              <div class="form-group row">
+                <label for="date"> Date  : </label>
+                <input type="date" id="date" name="date" value="{{ request.GET.date}}">
+              </div>
+
+              <!-- <input class="form-control mr-sm-2" type="time" name="time" value="{{ request.GET.time}}"> -->
+
+              <button class="btn btn-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
-      <a class="navbar-brand" href="{% url 'cabshare:index'%}"><span style="font-family:American Typewriter, serif">CabShare</span></a>
+      <a class="navbar-brand" href="{% url 'cabshare:index'%}"><span style="font-family:American Typewriter, serif"><img src="{% static 'cabshare/logo.jpg' %}" alt="logo" style="height:40px; width: 150px;"></span></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="topNavbar">
         <div class="mx-auto order-0">
-          <form class="form-inline" action="{% url 'cabshare:search' %}" role="search" method="get" >
-            <input class="form-control mr-sm-2" type="text" placeholder="Search for your destination" name="destination" value="{{ request.GET.destination }}">
-            <input class="form-control mr-sm-2" type="date" name="date" value="{{ request.GET.date}}">
-            <!-- <input class="form-control mr-sm-2" type="time" name="time" value="{{ request.GET.time}}"> -->
-
-            <button class="btn btn-default" type="submit" style="background-color:white">Search</button>
-          </form>
+          <button type="button" class="btn btn-light" data-toggle="modal" data-target="#myModalsearch"> Search for suitable booking... </button>
         </div>
 <!-- <ul class="navbar-nav ml-auto justify-content-end">    ->Can also use this to make it align right-->
         <ul class="navbar-nav">
@@ -47,7 +70,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'cabshare:booking-add' %}" data-toggle="tooltip" data-placement="bottom" title=" New Booking"><i class='fas fa-plus'></i>&nbsp;</a>
+            <a class="nav-link" href="{% url 'cabshare:booking-add' %}" data-toggle="tooltip" data-placement="bottom" title=" New Booking"><i class='fas fa-plus'></i> Add Booking&nbsp;</a>
           </li>
 
           <li class="nav-item dropdown">

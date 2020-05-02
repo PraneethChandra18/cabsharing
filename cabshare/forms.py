@@ -22,7 +22,7 @@ class BookingForm(forms.ModelForm):
         date = cleaned_data.get("date_of_journey")
         time = cleaned_data.get("time")
         if date <= datetime.date.today() and time <= datetime.datetime.now().time():
-            raise forms.ValidationError('The date must be between today and before 30 days')
+            raise forms.ValidationError('The date must be after or today')
 
 class ChatForm(forms.ModelForm):
 

@@ -4,9 +4,9 @@
 
 {% block body %}
 
-<div class="card" style="width:400px">
+<div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
  <img class="card-img-top" src="{{ user_profile.photo.url }}" alt="Card image">
- <div class="card-body">
+ <div class="card-body" style="color:white">
    <h4 class="card-title">{{ user_profile.name }}</h4>
    <p class="card-text"> DOB : {{ user_profile.date_of_birth }}</p>
    <p class="card-text"> Gender : {{ user_profile.gender }}</p>

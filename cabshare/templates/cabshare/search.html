@@ -7,17 +7,17 @@
 <input type="text" id="from_user_pk" value="{{user.pk}}">
 </div>
 
-<h2> Suitable bookings for you </h2>
+<h2 style="color:white"> Suitable bookings for you </h2>
   {% if result %}
 
-    <div class="row">
+    <div class="row" style="height:85vh;" id="overflow">
     <!-- row attribute along with col attribute below keeps cards in horizontal order -->
     {% for booking in result %}
         <div class="col-sm-12 col-lg-3">
           <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
           <!-- col-lg-num -> here num decides the gap between cards -->
-          <div class="card h-100" style="width:400px">
-            <div class="card-body">
+          <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+            <div class="card-body" style="color:white">
               <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
               <p class="card-text"> Time : {{ booking.time }} </p>
               <p class="card-text"> Destination : {{ booking.destination }} </p>
@@ -48,14 +48,15 @@
               {% else %}
                 <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button> </span>
               {% endif %}
-
+              <br/>
+                <a href="{% url 'cabshare:chat' booking.user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a>
             </div>
           </div>
         </div>
     {% endfor %}
     </div>
   {% else %}
-    <h3>No Bookings</h3>
+    <h3 style="color:white">No Bookings</h3>
   {% endif %}
 
   <script>
@@ -94,6 +95,11 @@
             }
           });
         }
+
+    onload = function() {
+      document.getElementById("overflow").style.overflow = "auto";
+    };
+
   </script>
 
 {% endblock %}

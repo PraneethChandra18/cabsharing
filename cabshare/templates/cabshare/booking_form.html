@@ -3,7 +3,13 @@
 {% block title%} Add Booking {% endblock %}
 
 {% block body %}
-<div class="card-body" style="background-color:white">
+<style>
+.card-body {
+  background: rgba(6, 4, 4, 0.6);
+ }
+</style>
+
+<div class="card-body" style="width:1000px">
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'cabshare/form-template.html' %}
@@ -21,7 +27,6 @@
     </div>
   </form>
 </div>
-
 
 <!-- For datepicker -->
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
