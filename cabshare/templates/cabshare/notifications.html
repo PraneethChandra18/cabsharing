@@ -3,6 +3,7 @@
 {% block title %} Notifications {% endblock %}
 
 {% block body %}
+{% load filters %}
 <div class="card" style="height:85vh;background: rgba(6, 4, 4, 0.6);" id="overflow">
 <div id="chat" class="card-body">
   <div align="right">
@@ -22,11 +23,15 @@
              <tr>
                <td style="color:white;"> {{ forloop.counter }} </td>
                {% if notification.type == "request" %}
-                <td> <a href="{% url 'cabshare:my_bookings' %}">{{ notification.notification }}</a></td>
+                <td>
+                   {% with notification.notification|split:"-/-" as parts %}
+                     <a href="{% url 'cabshare:booking-viewrequests' parts|last %}" style="{% if forloop.counter > unseen%}color:white;{% endif %}">{{ parts|first }}</a>
+                   {% endwith %}
+                </td>
                {% elif notification.type == "accept" %}
-                <td> <a href="{% url 'cabshare:myrequests' %}">{{ notification.notification }}</a></td>
+                <td> <a href="{% url 'cabshare:myrequests' %}" style="{% if forloop.counter > unseen%}color:white;{% endif %}">{{ notification.notification }}</a></td>
                {% else %}
-                <td> <a href="{% url 'cabshare:mychats' %}">{{ notification.notification }}</a> </td>
+                <td> <a href="{% url 'cabshare:mychats' %}" style="{% if forloop.counter > unseen%}color:white;{% endif %}">{{ notification.notification }}</a> </td>
                {% endif %}
              </tr>
             {% endfor %}

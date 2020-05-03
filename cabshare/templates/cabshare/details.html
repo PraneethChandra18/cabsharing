@@ -3,6 +3,13 @@
 {% block title%} My Bookings {% endblock %}
 
 {% block body %}
+<style>
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+</style>
+
 <div style="height:85vh;" id="overflow">
 <h2 style="color:white;"> Current Bookings </h2>
 {% if bookings %}
@@ -12,13 +19,14 @@
   {% for booking in bookings %}
     {% if booking.is_active %}
 
-      <div class="col-sm-12 col-lg-3">
+      <div class="col-sm-12 col-lg-3 animated flipInY">
         <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
         <!-- col-lg-num -> here num decides the gap between cards -->
-        <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+        <div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
           <div class="card-body" style="color:white">
             <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
             <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> Starting Point : {{ booking.starting_point }} </p>
             <p class="card-text"> Destination : {{ booking.destination }} </p>
             <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
             <p class="card-text"> Budget : {{ booking.budget }} </p>
@@ -26,24 +34,6 @@
 
             <a href="{% url 'cabshare:booking-update' booking.id %}"><button type="button" class="btn btn-light"><i class='fas fa-edit'></i>Edit </button>&nbsp;</a>
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Cancel </button>
-            <div class="modal" id="myModal{{booking.pk}}">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title"> Cancel Booking </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-
-                  <div class="modal-body"> Are you sure to cancel this booking? </div>
-
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
-                    <a href="{% url 'cabshare:booking-delete' booking.id %}"> <button type="button" class="btn btn-danger"> Cancel Booking </button> </a>
-                  </div>
-
-                </div>
-              </div>
-            </div>
           </div>
           <div class="card-footer" style="color:white">
              You are going together with ....
@@ -58,6 +48,25 @@
 
         </div>
       </div>
+      <div class="modal" id="myModal{{booking.pk}}" style="color:black">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"> Cancel Booking </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body"> Are you sure to cancel this booking? </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
+              <a href="{% url 'cabshare:booking-delete' booking.id %}"> <button type="button" class="btn btn-danger"> Cancel Booking </button> </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
       <br>
     {% endif %}
   {% endfor %}
@@ -90,41 +99,23 @@
 
 {% if bookings %}
 
-  <div class="row">
+<div class="row">
   <!-- row attribute along with col attribute below keeps cards in horizontal order -->
   {% for booking in bookings %}
     {% if not booking.is_active %}
 
-      <div class="col-sm-12 col-lg-3">
+      <div class="col-sm-12 col-lg-3 animated flipInY">
         <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
         <!-- col-lg-num -> here num decides the gap between cards -->
-        <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+        <div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
           <div class="card-body" style="color:white">
             <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
             <p class="card-text"> Time : {{ booking.time }} </p>
+            <p class="card-text"> Starting Point : {{ booking.starting_point }} </p>
             <p class="card-text"> Destination : {{ booking.destination }} </p>
             <p class="card-text"> amount_of_luggage : {{ booking.amount_of_luggage }} </p>
             <p class="card-text"> Budget : {{ booking.budget }} </p>
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Delete </button>
-            <div class="modal" id="myModal{{booking.pk}}">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title"> Cancel Booking </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  </div>
-
-                  <div class="modal-body"> Are you sure to cancel this booking? </div>
-
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
-                    <a href="{% url 'cabshare:booking-delete' booking.id %}"> <button type="button" class="btn btn-danger"> Delete </button> </a>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
           </div>
           <div class="card-footer" style="color:white">
              You travelled together with ....
@@ -139,6 +130,25 @@
 
         </div>
       </div>
+      <div class="modal" id="myModal{{booking.pk}}" style="color:black">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"> Cancel Booking </h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body"> Are you sure to cancel this booking? </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-light" data-dismiss="modal"> Go Back </button>
+              <a href="{% url 'cabshare:booking-delete' booking.id %}"> <button type="button" class="btn btn-danger"> Delete </button> </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     {% endif %}
   {% endfor %}
   </div>
@@ -151,6 +161,7 @@
   onload = function() {
     document.getElementById("overflow").style.overflow = "auto";
   };
+
 
 </script>
 {% endblock %}

@@ -4,11 +4,25 @@ from django.urls import reverse
 
 # Create your models here.
 
+AREA_CHOICES = (
+    ("IIT GUWAHATI", "IIT GUWAHATI"),
+    ("A", "A"),
+    ("B", "B"),
+    ("C", "C"),
+    ("D", "D"),
+    ("E", "E"),
+    ("F", "F"),
+    ("G", "G"),
+)
+# When a change is made to these choices, make the corresponding changes in base.html(account and cabshare) at search.
+
+
 class Booking(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
     date_of_journey = models.DateField(help_text="Please use the following format: <em>YYYY-MM-DD</em>.",default=None)
     time = models.TimeField(help_text="Please use the following format: <em>HH:MM:SS</em>.",default=None)
-    destination = models.CharField(max_length=500)
+    starting_point = models.CharField(max_length=100,choices=AREA_CHOICES,default="IIT GUWAHATI")
+    destination = models.CharField(max_length=100,choices=AREA_CHOICES,default="IIT GUWAHTI")
     amount_of_luggage = models.CharField(max_length=500)
     budget = models.CharField(max_length=100)
     special_note = models.TextField(null=True,blank=True)
@@ -18,7 +32,7 @@ class Booking(models.Model):
         return reverse('cabshare:current_bookings')
 
     def __str__(self):
-        return self.destination
+        return "from " + self.starting_point+ " to " + self.destination + " at " + str(self.date_of_journey) + " " + str(self.time) + "-/-" +str(self.pk)
 
 class Current_Booking(models.Model):
     booking = models.ForeignKey(Booking,on_delete=models.CASCADE)

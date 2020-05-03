@@ -3,6 +3,13 @@
 {% block title%} My Bookings {% endblock %}
 
 {% block body %}
+<style>
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+</style>
+
 <div style="display:none">
 <input type="text" id="from_user_pk" value="{{user.pk}}">
 </div>
@@ -13,13 +20,14 @@
     <div class="row" style="height:85vh;" id="overflow">
     <!-- row attribute along with col attribute below keeps cards in horizontal order -->
     {% for booking in result %}
-        <div class="col-sm-12 col-lg-3">
+        <div class="col-sm-12 col-lg-3 animated flipInY">
           <!-- class="col-sm-12 col-lg-3" makes cards responsive -->
           <!-- col-lg-num -> here num decides the gap between cards -->
-          <div class="card h-100" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+          <div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
             <div class="card-body" style="color:white">
               <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
               <p class="card-text"> Time : {{ booking.time }} </p>
+              <p class="card-text"> Starting Point : {{ booking.starting_point }} </p>
               <p class="card-text"> Destination : {{ booking.destination }} </p>
               <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
               <p class="card-text"> Budget : {{ booking.budget }} </p>
@@ -43,10 +51,10 @@
                   {% endif %}
                 {% endfor %}
                 {% if not booking in to_bookings %}
-                  <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button> </span>
+                  <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request{{ booking }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button> </span>
                 {% endif %}
               {% else %}
-                <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button> </span>
+                <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" name="{{ booking.pk }}" id="request{{ booking }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button> </span>
               {% endif %}
               <br/>
                 <a href="{% url 'cabshare:chat' booking.user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a>
@@ -90,7 +98,7 @@
             dataType: 'json',
             success: function (data) {
               place = "unjoin" + input
-              html = '<span id="join'+data['booking_pk']+'"><button type="button" class="btn btn-primary" id="request'+data['booking_pk']+'" name="'+data['booking_pk']+'" value="'+data['booking_user_pk']+'" onclick="joinrequest(this);request(this);">Request to join</button></span>'
+              html = '<span id="join'+data['booking_pk']+'"><button type="button" class="btn btn-primary" id="request'+data['booking_name']+'" name="'+data['booking_pk']+'" value="'+data['booking_user_pk']+'" onclick="joinrequest(this);request(this);">Request to join</button></span>'
               document.getElementById(place).innerHTML = html;
             }
           });

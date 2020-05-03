@@ -15,7 +15,7 @@ class BookingForm(forms.ModelForm):
 
     class Meta:
         model = Booking
-        fields = ['date_of_journey','time','destination','amount_of_luggage','budget','special_note']
+        fields = ['date_of_journey','time','starting_point','destination','amount_of_luggage','budget','special_note']
 
     def clean(self):
         cleaned_data = super(BookingForm,self).clean()
@@ -23,6 +23,11 @@ class BookingForm(forms.ModelForm):
         time = cleaned_data.get("time")
         if date <= datetime.date.today() and time <= datetime.datetime.now().time():
             raise forms.ValidationError('The date must be after or today')
+
+    # def __init__(self, *args, **kwargs):
+    #         super(MyForm, self).__init__(*args, **kwargs)
+    #         self.fields['time'].widget.attrs['class'] = 'clockpicker'
+
 
 class ChatForm(forms.ModelForm):
 

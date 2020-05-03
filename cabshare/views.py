@@ -105,7 +105,7 @@ def isactive():
 # -------------------------------------------------------------------------------------------------------------------
 class BookingUpdate(LoginRequiredMixin, UpdateView):
     model = Booking
-    fields = ['date_of_journey','time','destination','amount_of_luggage','budget','special_note']
+    fields = ['date_of_journey','time','starting_point','destination','amount_of_luggage','budget','special_note']
 
 class BookingDelete(DeleteView):
     model=Booking
@@ -123,16 +123,26 @@ def DeletePrevious(request):
 
 def search(request):
     isactive()
+    starting_point = request.GET.get('starting_point')
     destinationquery = request.GET.get('destination')
     d = request.GET.get('date')
-    # time = request.GET.get('time')
+    time = request.GET.get('time')
     #
     # from_date = time - datetime.timedelta(hours = 2)
     # to_date = time + datetime.timedelta(hours = 2)
+    req = int(time[0:2])
+    low = req-2
+    high = req+2
+    if low<0:
+        low=0
+    if high>23:
+        high=23
+    mintime = str(low)
+    maxtime = str(high)
     bookings = Booking.objects.filter(is_active=True)
     if destinationquery and date:
         # result = bookings.filter(booking.destination=destinationquery & booking.date=date)
-        result = bookings.filter(Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & ~Q(user=request.user))
+        result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & Q(time__hour__gte=mintime, time__hour__lte=maxtime) & ~Q(user=request.user))
 
         requests = Request.objects.filter(from_user=request.user)
         to_bookings = []
@@ -151,11 +161,24 @@ def search(request):
 def results(request,pk):
     isactive()
     query = Current_Booking.objects.get(pk=pk)
+    starting_point = query.booking.starting_point
     destinationquery = query.booking.destination
     d = query.booking.date_of_journey
+    time = str(query.booking.time)
+
+    req = int(time[0:2])
+    low = req-2
+    high = req+2
+    if low<0:
+        low=0
+    if high>23:
+        high=23
+    mintime = str(low)
+    maxtime = str(high)
+
     bookings = Booking.objects.filter(is_active=True)
     if destinationquery and date:
-        result = bookings.filter(Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & ~Q(user=request.user))
+        result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & Q(time__hour__range=[mintime,maxtime]) & ~Q(user=request.user))
 
         requests = Request.objects.filter(from_user=request.user)
         to_bookings = []
@@ -189,9 +212,11 @@ def cancelrequest(request):
     booking_pk = booking.pk
     booking_user_pk = booking.user.pk
     r.delete()
+    booking_name = booking.__str__()
     data = {
         'booking_pk': booking_pk,
-        'booking_user_pk': booking_user_pk
+        'booking_user_pk': booking_user_pk,
+        'booking_name':booking_name
             }
 
     return JsonResponse(data)
@@ -228,7 +253,7 @@ def viewrequests(request,pk):
     to_booking = Booking.objects.get(pk=pk)
     r = Request.objects.filter(to_booking=to_booking)
     user = request.user
-    return render(request,'cabshare/viewrequests.html',{'requests':r,'user':user})
+    return render(request,'cabshare/viewrequests.html',{'requests':r,'user':user,'booking':to_booking})
 
 def acceptrequest(request):
     pk = request.GET.get('inputValue')
@@ -320,11 +345,12 @@ def notifications(request):
     user = request.user
     notifications = Notification.objects.filter(to_user=user)
     notifications = notifications.order_by('-pk')
+    unseen = Notification.objects.filter(to_user=user,seen=False).count()
     notify=notifications.filter(seen=False)
     for n in notify:
         n.seen = True
         n.save()
-    return render(request,'cabshare/notifications.html',{'notifications':notifications})
+    return render(request,'cabshare/notifications.html',{'notifications':notifications,'unseen':unseen})
 
 def notify_delete_all(request):
     user = request.user

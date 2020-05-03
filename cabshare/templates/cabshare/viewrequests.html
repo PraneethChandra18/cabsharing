@@ -7,7 +7,21 @@
 <input type="text" id="from_user_pk" value="{{user.pk}}">
 <input type="text" id="from_username" value="{{user.username}}">
 </div>
-
+<div class="row">
+  <div class="col-sm-3">
+    <div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+      <div class="card-body" style="color:white">
+        <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+        <p class="card-text"> Time : {{ booking.time }} </p>
+        <p class="card-text"> Starting Point : {{ booking.starting_point }} </p>
+        <p class="card-text"> Destination : {{ booking.destination }} </p>
+        <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+        <p class="card-text"> Budget : {{ booking.budget }} </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-9">
+  <h2 style="color:white;"> Requests </h2>
   {% if requests %}
   <div class="card h-100" style="height:85vh;background: rgba(6, 4, 4, 0.6);">
     <div class="card-body">
@@ -45,9 +59,9 @@
     </div>
   </div>
   {% else %}
-      <h2>No requests yet</h2>
+      <h2 style="color:white;">No requests yet</h2>
   {% endif %}
-
+  </div>
   <script>
     function acceptrequest(d) {
         var input = d.getAttribute('name');

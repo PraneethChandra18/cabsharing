@@ -7,6 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" integrity="sha256-PHcOkPmOshsMBC+vtJdVr5Mwb7r0LkSVJPlPrp/IMpU=" crossorigin="anonymous" />
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -27,15 +28,40 @@
           <div class="modal-body">
             <form  action="{% url 'cabshare:search' %}" method="get">
               <div class="form-group row">
-                <label for="search"> Destination  : </label>
-                <input type="text" placeholder="Search for your destination" id="search" name="destination" value="{{ request.GET.destination }}">
+                <label for="starting_point"> Starting Point : </label>
+                <select id="starting_point" name="starting_point">
+                  <option value="IIT GUWAHATI">IIT GUWAHATI</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
+              </div>
+
+              <div class="form-group row">
+                <label for="destination"> Destination  : </label>
+                <select id="destination" name="destination">
+                  <option value="IIT GUWAHATI">IIT GUWAHATI</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                </select>
               </div>
               <div class="form-group row">
                 <label for="date"> Date  : </label>
                 <input type="date" id="date" name="date" value="{{ request.GET.date}}">
               </div>
-
-              <!-- <input class="form-control mr-sm-2" type="time" name="time" value="{{ request.GET.time}}"> -->
+              <div class="form-group row">
+                <label for="time"> Time  : </label>
+                <input type="time" name="time" value="{{ request.GET.time}}">
+              </div>
 
               <button class="btn btn-success" type="submit">Search</button>
             </form>
@@ -120,11 +146,13 @@
       };
 
      function request(d) {
+       var info = d.getAttribute('id');
+       info = info.substring(7);
         var data = {
             from_user: $('#from_user_pk').val(),
             type: "request",
             to_user: d.getAttribute('value'),
-            message: "Request to join you on your journey",
+            message: "Request to join you on your journey" + " "+info,
         }
         notificationSocket.send(JSON.stringify(data));
         return false;
