@@ -20,40 +20,34 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def index(request):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    else:
-        isactive()
-        user = request.user
-        bookings = Booking.objects.filter(~Q(user=user) & Q(is_active=True))
-        requests = Request.objects.filter(from_user=request.user)
-        to_bookings = []
-        for r in requests:
-            to_bookings.append(r.to_booking)
-        context = {
-        'user':user,
-        'bookings':bookings,
-        'requests':requests,
-        'to_bookings':to_bookings
-        }
-        return render(request,'cabshare/index.html',context)
+    isactive()
+    user = request.user
+    bookings = Booking.objects.filter(~Q(user=user) & Q(is_active=True))
+    requests = Request.objects.filter(from_user=request.user)
+    to_bookings = []
+    for r in requests:
+        to_bookings.append(r.to_booking)
+    context = {
+    'user':user,
+    'bookings':bookings,
+    'requests':requests,
+    'to_bookings':to_bookings
+    }
+    return render(request,'cabshare/index.html',context)
 
 @login_required
 def details(request):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    else:
-        isactive()
-        bookings = Booking.objects.filter(user = request.user)
-        b = bookings.filter(is_active=True)
-        requests=Request.objects.none()
-        for booking in b:
-            requests = requests | Request.objects.filter(to_booking=booking)
-        context = {
-        'bookings':bookings,
-        'requests':requests
-        }
-        return render(request,'cabshare/details.html',context)
+    isactive()
+    bookings = Booking.objects.filter(user = request.user)
+    b = bookings.filter(is_active=True)
+    requests=Request.objects.none()
+    for booking in b:
+        requests = requests | Request.objects.filter(to_booking=booking)
+    context = {
+    'bookings':bookings,
+    'requests':requests
+    }
+    return render(request,'cabshare/details.html',context)
 # -------------------------------------------------------------------------------------------------------------------
 
 @login_required

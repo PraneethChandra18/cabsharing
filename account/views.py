@@ -7,6 +7,7 @@ from .models import User_profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request,'account/home.html')
@@ -48,6 +49,7 @@ def login_user(request):
             messages.error(request, 'The credentials you entered were wrong.Please try again.')
             return render(request,'account/home.html')
 
+@login_required
 def logout_user(request):
     logout(request)
     return redirect('account:home')
@@ -72,23 +74,19 @@ class ProfileUpdate(LoginRequiredMixin, UpdateView):
     model = User_profile
     fields= ['name','photo','date_of_birth','hostel','department','gender','bio']
 
+@login_required
 def details(request):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    else:
-        user_profile = User_profile.objects.get(user = request.user)
-        context = {
-        'user_profile':user_profile
-        }
-        return render(request,'account/detail.html',context)
+    user_profile = User_profile.objects.get(user = request.user)
+    context = {
+    'user_profile':user_profile
+    }
+    return render(request,'account/detail.html',context)
 
+@login_required
 def profile(request,pk):
-    if not request.user.is_authenticated:
-        return redirect('account:login')
-    else:
-        user = User.objects.get(pk=pk)
-        user_profile = User_profile.objects.get(user = user)
-        context = {
-        'user_profile':user_profile
-        }
-        return render(request,'account/detail.html',context)
+    user = User.objects.get(pk=pk)
+    user_profile = User_profile.objects.get(user = user)
+    context = {
+    'user_profile':user_profile
+    }
+    return render(request,'account/detail.html',context)
