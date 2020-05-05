@@ -1,0 +1,49 @@
+{% extends 'cabshare/base.html'%}
+
+{% block title%} My Bookings {% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-sm-3">
+    <div class="card" style="width:400px;background: rgba(6, 4, 4, 0.6);">
+      <div class="card-body" style="color:white">
+        <h4 class="card-title"> DOJ : {{ booking.date_of_journey }} </h4>
+        <p class="card-text"> Time : {{ booking.time }} </p>
+        <p class="card-text"> Starting Point : {{ booking.starting_point }} </p>
+        <p class="card-text"> Destination : {{ booking.destination }} </p>
+        <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
+        <p class="card-text"> Budget : {{ booking.budget }} </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-9">
+  <h2 style="color:white;"> Requests </h2>
+  {% if requests %}
+  <div class="card h-100" style="height:85vh;background: rgba(6, 4, 4, 0.6);">
+    <div class="card-body">
+    <div class="table-responsive">
+       <table class="table table-hover">
+         <thead style="border-color:white">
+           <tr style="color:white">
+             <th>Name</th>
+           </tr>
+         </thead>
+         <tbody>
+           {% for request in requests %}
+            {% if request.accept == True %}
+             <tr>
+               <td> <a href="{% url 'account:profile-another-user' request.from_user.pk %}">{{ request.from_user.username }}</a></td>
+             </tr>
+             {% endif %}
+            {% endfor %}
+         </tbody>
+       </table>
+     </div>
+    </div>
+  </div>
+  {% else %}
+      <h2 style="color:white;">No requests yet</h2>
+  {% endif %}
+  </div>
+
+{% endblock %}

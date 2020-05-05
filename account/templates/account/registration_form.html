@@ -1,27 +1,58 @@
-{% extends 'account/base2.html'%}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" />
 
-{% block title %} SignUp {% endblock %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-{% block body %}
-<div class="card text-center w-25 mx-auto">
-  <div class="card-header"> <strong>SignUp</strong> </div>
-  <div class="card-body" style="background-color:white">
+    <title> {% block title %} SignUp {% endblock %} </title>
+    <style>
+      body {
+        background-color: #6f6f6f;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+      <ul class="navbar-nav mx-auto justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account:home' %}"><img src="{% static 'account/logo.jpg' %}" alt="logo" style="height:40px; width: 200px;"></a>
+        </li>
+      </ul>
+    </nav>
+    <div class="container-fluid" style="margin-top:80px">
+      <div class="row">
+        <div class="col">
+        </div>
+        <div class="col">
+        <div class="card w-50 text-center mx-auto" style="margin-top:20vh;background: rgba(6, 4, 4, 0.6);">
+          <div class="card-header" style="color:white;"> <strong>SignUp</strong> </div>
+          <div class="card-body">
 
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {% include 'account/form-template.html' %}
-      <div class="form-group row">
-        <div class="col-sm-10">
-          <button type="submit" class="btn btn-success">SignUp</button>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% include 'account/form-template.html' %}
+              <div class="form-group row">
+                  <button type="submit" class="btn btn-block" style="background-color:yellow">SignUp</button>
+              </div>
+              <p style="color:white;"><--- OR ---></p>
+              <a href="{% url 'social:begin' 'google-oauth2' %}"> <button type="button" class="btn btn-light"><i class='fab fa-google'></i>  Google </button> &nbsp; </a>
+              <a href="{% url 'social:begin' 'github' %}"> <button type="button" class="btn btn-light"><i class='fab fa-github'></i>  Github</button> </a>
+            </form>
+          </div>
+          <div class="card-footer text-muted" style="color:white;">
+          Already have an account? Then <a href="{% url 'account:home' %}"> Login </a>
+          </div>
+        </div>
         </div>
       </div>
-      <p><--- OR ---></p>
-      <a href="{% url 'social:begin' 'google-oauth2' %}"> <button type="button" class="btn btn-light"><i class='fab fa-google'></i>  Google </button> &nbsp; </a>
-      <a href="{% url 'social:begin' 'github' %}"> <button type="button" class="btn btn-light"><i class='fab fa-github'></i>  Github</button> </a>
-    </form>
-  </div>
-  <div class="card-footer text-muted">
-  Already have an account? Then <a href="{% url 'account:login' %}"> Login </a>
-  </div>
-</div>
-{% endblock %}
+    </div>
+  </body>
+</html>

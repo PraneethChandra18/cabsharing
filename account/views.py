@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import User_profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 def home(request):
     return render(request,'account/home.html')
@@ -35,13 +36,8 @@ def register(request):
         return render(request, 'account/registration_form.html',{'form':form})
 
 def login_user(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-
-        data = request.POST.copy()
-
-        username = data.get('username')
-        password = data.get('password')
+        username = request.GET.get('username')
+        password = request.GET.get('password')
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -49,14 +45,12 @@ def login_user(request):
                 login(request,user)
                 return redirect('account:login-redirect')
         else:
-            return render(request,'account/login_form.html',{'form':form})
-    else:
-        form = LoginForm(None)
-        return render(request,'account/login_form.html',{'form':form})
+            messages.error(request, 'The credentials you entered were wrong.Please try again.')
+            return render(request,'account/home.html')
 
 def logout_user(request):
     logout(request)
-    return redirect('account:login')
+    return redirect('account:home')
 
 def loginredirect(request):
     try:

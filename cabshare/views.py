@@ -6,7 +6,7 @@ from .models import Booking,Current_Booking,Request,Chat,Notification
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from .forms import BookingForm,ChatForm
+from .forms import BookingForm,ChatForm,FeedbackForm
 from datetime import date, timedelta
 import datetime
 import time
@@ -14,7 +14,11 @@ from threading import Timer
 from django.db.models import Q
 import json
 from django.http import JsonResponse
+from django.contrib import messages
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def index(request):
     if not request.user.is_authenticated:
         return redirect('account:login')
@@ -34,6 +38,7 @@ def index(request):
         }
         return render(request,'cabshare/index.html',context)
 
+@login_required
 def details(request):
     if not request.user.is_authenticated:
         return redirect('account:login')
@@ -51,6 +56,7 @@ def details(request):
         return render(request,'cabshare/details.html',context)
 # -------------------------------------------------------------------------------------------------------------------
 
+@login_required
 def BookingCreate(request):
     if request.method=='POST':
         form = BookingForm(request.POST)
@@ -107,13 +113,14 @@ class BookingUpdate(LoginRequiredMixin, UpdateView):
     model = Booking
     fields = ['date_of_journey','time','starting_point','destination','amount_of_luggage','budget','special_note']
 
-class BookingDelete(DeleteView):
+class BookingDelete(LoginRequiredMixin, DeleteView):
     model=Booking
     success_url=reverse_lazy('cabshare:my_bookings')
 
     def get(self, *args, **kwargs):
             return self.post(*args, **kwargs)
 
+@login_required
 def DeletePrevious(request):
     bookings = Booking.objects.filter(user=request.user,is_active=False)
     for booking in bookings:
@@ -121,6 +128,7 @@ def DeletePrevious(request):
     return redirect('cabshare:my_bookings')
 # ------------------------------------------------------------------------------------------------------------------
 
+@login_required
 def search(request):
     isactive()
     starting_point = request.GET.get('starting_point')
@@ -130,33 +138,39 @@ def search(request):
     #
     # from_date = time - datetime.timedelta(hours = 2)
     # to_date = time + datetime.timedelta(hours = 2)
-    req = int(time[0:2])
-    low = req-2
-    high = req+2
-    if low<0:
-        low=0
-    if high>23:
-        high=23
-    mintime = str(low)
-    maxtime = str(high)
+
     bookings = Booking.objects.filter(is_active=True)
-    if destinationquery and date:
-        # result = bookings.filter(booking.destination=destinationquery & booking.date=date)
+    result=Booking.objects.none()
+    if destinationquery and date and time:
+        req = int(time[0:2])
+        low = req-2
+        high = req+2
+        if low<0:
+            low=0
+        if high>23:
+            high=23
+        mintime = str(low)
+        maxtime = str(high)
+
         result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & Q(time__hour__gte=mintime, time__hour__lte=maxtime) & ~Q(user=request.user))
-
-        requests = Request.objects.filter(from_user=request.user)
-        to_bookings = []
-        for r in requests:
-            to_bookings.append(r.to_booking)
-        context = {
-        'result':result,
-        'requests':requests,
-        'to_bookings':to_bookings
-        }
-
-        return render(request,'cabshare/search.html',context)
+    elif destinationquery and date:
+        result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & ~Q(user=request.user))
+    elif destinationquery:
+        result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & ~Q(user=request.user))
     else:
         return render(request,'cabshare/error.html')
+
+    requests = Request.objects.filter(from_user=request.user)
+    to_bookings = []
+    for r in requests:
+        to_bookings.append(r.to_booking)
+    context = {
+    'result':result,
+    'requests':requests,
+    'to_bookings':to_bookings
+    }
+
+    return render(request,'cabshare/search.html',context)
 
 def results(request,pk):
     isactive()
@@ -177,7 +191,7 @@ def results(request,pk):
     maxtime = str(high)
 
     bookings = Booking.objects.filter(is_active=True)
-    if destinationquery and date:
+    if destinationquery and date and time:
         result = bookings.filter(Q(starting_point__icontains=starting_point) & Q(destination__icontains=destinationquery) & Q(date_of_journey__icontains=d) & Q(time__hour__range=[mintime,maxtime]) & ~Q(user=request.user))
 
         requests = Request.objects.filter(from_user=request.user)
@@ -194,6 +208,7 @@ def results(request,pk):
     else:
         return render(request,'cabshare/error.html')
 # ---------------------------------------------------------------------------------------------------------------------
+@login_required
 def joinrequest(request):
     pk = request.GET.get('inputValue')
     to_booking = Booking.objects.get(pk=pk)
@@ -205,6 +220,7 @@ def joinrequest(request):
             }
     return JsonResponse(data)
 
+@login_required
 def cancelrequest(request):
     pk = request.GET.get('inputValue')
     r = Request.objects.get(pk=pk)
@@ -213,6 +229,13 @@ def cancelrequest(request):
     booking_user_pk = booking.user.pk
     r.delete()
     booking_name = booking.__str__()
+
+    type = request.GET.get('type')
+
+    if type=="untag":
+        booking.going_together = booking.going_together - 1
+        booking.save()
+
     data = {
         'booking_pk': booking_pk,
         'booking_user_pk': booking_user_pk,
@@ -234,6 +257,7 @@ def cancelrequest(request):
 #
 #     return redirect('cabshare:index')
 
+@login_required
 def myrequests(request):
     user = request.user
     requests = Request.objects.filter(from_user=user)
@@ -249,19 +273,29 @@ def myrequests(request):
     }
     return render(request,'cabshare/myrequests.html',context)
 # ----------------------------------------------------------------------------------------------------------------------
+@login_required
 def viewrequests(request,pk):
     to_booking = Booking.objects.get(pk=pk)
     r = Request.objects.filter(to_booking=to_booking)
     user = request.user
     return render(request,'cabshare/viewrequests.html',{'requests':r,'user':user,'booking':to_booking})
 
+@login_required
+def viewrequestsothers(request,pk):
+    to_booking = Booking.objects.get(pk=pk)
+    r = Request.objects.filter(to_booking=to_booking)
+    return render(request,'cabshare/viewrequestsothers.html',{'requests':r,'booking':to_booking})
+
+@login_required
 def acceptrequest(request):
     pk = request.GET.get('inputValue')
     re = Request.objects.get(pk=pk)
     re.accept = True
     re.save()
     to_booking = re.to_booking
-    r = Request.objects.filter(to_booking=to_booking)
+    to_booking.going_together = to_booking.going_together + 1
+    to_booking.save()
+
     data = {
         'pk': pk
             }
@@ -277,14 +311,28 @@ def acceptrequest(request):
 #
 #     return render(request,'cabshare/viewrequests.html',{'requests':r})
 
-def ignorerequest(request,pk):
+@login_required
+def ignorerequest(request):
+    pk = request.GET.get('inputValue')
     re = Request.objects.get(pk=pk)
     to_booking = re.to_booking
     re.delete()
-    r = Request.objects.filter(to_booking=to_booking)
-    return render(request,'cabshare/viewrequests.html',{'requests':r})
+
+    type = request.GET.get('type')
+
+    if type=="untag":
+        to_booking.going_together = to_booking.going_together - 1
+        to_booking.save()
+
+    data = {
+        'pk': pk
+            }
+
+    return JsonResponse(data)
+
 # ----------------------------------------------------------------------------------------------------------------------
 
+@login_required
 def chat(request,pk):
     from_user = request.user
     to_user = User.objects.get(pk=pk)
@@ -297,6 +345,7 @@ def chat(request,pk):
     chat = chat.order_by('pk')
     return render(request,'cabshare/chat.html',{'chat':chat,'to_user':to_user,'user':from_user})
 
+@login_required
 def messagesave(request,pk):
     form = ChatForm(None)
 
@@ -309,6 +358,7 @@ def messagesave(request,pk):
     new_message.save()
     return redirect('cabshare:chat',pk)
 
+@login_required
 def deletechat(request,pk):
     from_user = request.user
     to_user = User.objects.get(pk=pk)
@@ -319,6 +369,7 @@ def deletechat(request,pk):
     return redirect('cabshare:chat',pk)
 # -------------------------------------------------------------------------------------------------------------------------
 
+@login_required
 def mychats(request):
     user = request.user
     chat = Chat.objects.filter(from_user=user) | Chat.objects.filter(to_user=user)
@@ -341,6 +392,7 @@ def mychats(request):
     return render(request,'cabshare/mychats.html',{'with_users_dict':with_users_dict})
 # -------------------------------------------------------------------------------------------------------------------------
 
+@login_required
 def notifications(request):
     user = request.user
     notifications = Notification.objects.filter(to_user=user)
@@ -352,9 +404,53 @@ def notifications(request):
         n.save()
     return render(request,'cabshare/notifications.html',{'notifications':notifications,'unseen':unseen})
 
+@login_required
 def notify_delete_all(request):
     user = request.user
     notifications = Notification.objects.filter(to_user=user)
     for n in notifications:
         n.delete()
     return redirect('cabshare:notifications')
+
+# -------------------------------------------------------------------------------------------------------------------------
+
+@login_required
+def drop_booking(request):
+    pk = request.GET.get('inputValue')
+    b = Booking.objects.get(pk=pk)
+    b.drop=True
+    b.save()
+    data = {
+        'pk': pk
+            }
+
+    return JsonResponse(data)
+
+@login_required
+def make_active(request):
+    pk = request.GET.get('inputValue')
+    b = Booking.objects.get(pk=pk)
+    b.drop=False
+    b.save()
+    data = {
+        'pk': pk
+            }
+
+    return JsonResponse(data)
+
+@login_required
+def feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.save()
+            messages.success(request,'Thanks for the feedback. We try our best to give you the best.')
+            return redirect('cabshare:index')
+        else:
+            render(request,'cabshare/feedbackform.html',{'form':form})
+    else:
+        form = FeedbackForm(None)
+        return render(request,'cabshare/feedbackform.html',{'form':form})

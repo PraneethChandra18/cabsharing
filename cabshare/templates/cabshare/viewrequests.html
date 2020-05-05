@@ -35,21 +35,25 @@
          </thead>
          <tbody>
            {% for request in requests %}
+
              <tr>
+
                <td> <a href="{% url 'account:profile-another-user' request.from_user.pk %}">{{ request.from_user.username }}</a> <span style="color:white">wants to tag you along </span></td>
                <td>
-                 <a href="{% url 'cabshare:chat' request.from_user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                 {% if not request.accept %}
-                   <button type="button" class="btn btn-primary" id="accept{{request.pk}}" name="{{request.pk}}" value="{{ request.from_user.pk }}" onclick="acceptrequest(this);accept(this);">Accept</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                   <a href="{% url 'cabshare:ignorerequest' request.pk %}"> <button type="button" class="btn btn-secondary"> Ignore </button> </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                 {% else %}
-                    <div class="dropdown">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="{% url 'cabshare:ignorerequest' request.pk %}">Untag</a>
+                 <div id="decision{{request.pk}}">
+                   <a href="{% url 'cabshare:chat' request.from_user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   {% if not request.accept %}
+                     <button type="button" class="btn btn-primary" id="accept{{request.pk}}" name="{{request.pk}}" value="{{ request.from_user.pk }}" onclick="acceptrequest(this);accept(this);">Accept</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     <button type="button" class="btn btn-secondary" value="{{request.pk}}" name="ignore" onclick="ignorerequest(this);"> Ignore </button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   {% else %}
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                          <a class="dropdown-item" href="#"><button type="button" class="btn btn-light" value="{{request.pk}}" name="untag" onclick="ignorerequest(this);">Untag</button></a>
+                        </div>
                       </div>
-                    </div>
-                 {% endif %}
+                   {% endif %}
+                 </div>
                </td>
              </tr>
             {% endfor %}
@@ -78,6 +82,28 @@
             }
           });
         }
+
+    function ignorerequest(d) {
+        var input = d.getAttribute('value');
+        var type = d.getAttribute('name');
+
+        $.ajax({
+            url: "{% url 'cabshare:ignorerequest' %}",
+            data: {
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              'inputValue': input,
+              'type': type
+            },
+            dataType: 'json',
+            success: function (data) {
+              place = "decision" + input
+              html = ''
+              document.getElementById(place).innerHTML = html;
+            }
+          });
+        }
+
+
   </script>
 
 {% endblock %}

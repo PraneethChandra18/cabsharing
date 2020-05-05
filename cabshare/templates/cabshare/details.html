@@ -34,16 +34,20 @@
 
             <a href="{% url 'cabshare:booking-update' booking.id %}"><button type="button" class="btn btn-light"><i class='fas fa-edit'></i>Edit </button>&nbsp;</a>
             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal{{booking.pk}}"><i class='fas fa-trash-alt'></i> Cancel </button>
+            <br>
+            <br>
+
+            <div id="decision{{ booking.pk }}">
+              {% if booking.drop == False %}
+                <button type="button" class="btn btn-secondary" name="{{ booking.pk }}" onclick="drop_booking(this)">Drop </button>&nbsp;
+              {% else %}
+                <button type="button" class="btn btn-info" name="{{ booking.pk }}" onclick="make_active(this)">Make active </button>&nbsp;
+              {% endif %}
+            </div>
           </div>
           <div class="card-footer" style="color:white">
              You are going together with ....
-            {% for request in requests %}
-              {% if request.to_booking == booking %}
-                {% if request.accept %}
-                   <a href="{% url 'account:profile-another-user' request.from_user.pk %}">,{{ request.from_user }}</a>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
+             {{ booking.going_together }} <a href="{% url 'cabshare:booking-viewrequests' booking.pk %}"> others </a>
           </div>
 
         </div>
@@ -119,13 +123,7 @@
           </div>
           <div class="card-footer" style="color:white">
              You travelled together with ....
-            {% for request in requests %}
-              {% if request.to_booking == booking %}
-                {% if request.accept %}
-                   <a href="{% url 'account:profile-another-user' request.from_user.pk %}">,{{ request.from_user }}</a>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
+             {{ booking.going_together }} <a href="{% url 'cabshare:booking-viewrequests' booking.pk %}"> others </a>
           </div>
 
         </div>
@@ -162,6 +160,41 @@
     document.getElementById("overflow").style.overflow = "auto";
   };
 
+  function drop_booking(d) {
+      var input = d.getAttribute('name');
+
+      $.ajax({
+          url: "{% url 'cabshare:drop_booking' %}",
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            'inputValue': input
+          },
+          dataType: 'json',
+          success: function (data) {
+            place = "decision" + input
+            html = '<div id="decision'+data['pk']+'"><button type="button" class="btn btn-info" name="'+data['pk']+'" onclick="make_active(this);">Make active</button> </div>'
+            document.getElementById(place).innerHTML = html;
+          }
+        });
+      }
+
+  function make_active(d) {
+      var input = d.getAttribute('name');
+
+      $.ajax({
+          url: "{% url 'cabshare:make_active' %}",
+          data: {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            'inputValue': input
+          },
+          dataType: 'json',
+          success: function (data) {
+            place = "decision" + input
+            html = '<div id="decision'+data['pk']+'"><button type="button" class="btn btn-secondary" name="'+data['pk']+'" onclick="drop_booking(this);">Drop</button> </div>'
+            document.getElementById(place).innerHTML = html;
+          }
+        });
+      }
 
 </script>
 {% endblock %}

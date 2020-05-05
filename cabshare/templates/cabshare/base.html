@@ -7,13 +7,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <!-- animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" integrity="sha256-PHcOkPmOshsMBC+vtJdVr5Mwb7r0LkSVJPlPrp/IMpU=" crossorigin="anonymous" />
+    <!-- end -->
+
+    <!-- Icons -->
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- end -->
 
+    <!-- wow.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" integrity="sha256-z6FznuNG1jo9PP3/jBjL6P3tvLMtSwiVAowZPOgo56U=" crossorigin="anonymous"></script>
+    <script src="js/wow.min.js"></script>
+             <script>
+             new WOW().init();
+             </script>
+     <!-- end -->
+
+     <!-- my css -->
     <link rel="stylesheet" href="{% static 'cabshare/style.css' %}" type="text/css" />
-
+    <!-- end -->
     <title>{% block title %}CabShare{% endblock %}</title>
   </head>
   <body>
@@ -28,7 +43,8 @@
           <div class="modal-body">
             <form  action="{% url 'cabshare:search' %}" method="get">
               <div class="form-group row">
-                <label for="starting_point"> Starting Point : </label>
+                <label for="starting_point" class="col"> Starting Point : </label>
+                <div class="col">
                 <select id="starting_point" name="starting_point">
                   <option value="IIT GUWAHATI">IIT GUWAHATI</option>
                   <option value="A">A</option>
@@ -40,9 +56,11 @@
                   <option value="G">G</option>
                 </select>
               </div>
+              </div>
 
               <div class="form-group row">
-                <label for="destination"> Destination  : </label>
+                <label for="destination" class="col"> Destination : </label>
+                <div class="col">
                 <select id="destination" name="destination">
                   <option value="IIT GUWAHATI">IIT GUWAHATI</option>
                   <option value="A">A</option>
@@ -54,16 +72,21 @@
                   <option value="G">G</option>
                 </select>
               </div>
-              <div class="form-group row">
-                <label for="date"> Date  : </label>
-                <input type="date" id="date" name="date" value="{{ request.GET.date}}">
               </div>
               <div class="form-group row">
-                <label for="time"> Time  : </label>
+                <label for="date" class="col"> Date : </label>
+                <div class="col">
+                <input type="date" id="date" name="date" value="{{ request.GET.date}}">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="time" class="col"> Time : </label>
+                <div class="col">
                 <input type="time" name="time" value="{{ request.GET.time}}">
+                </div>
               </div>
 
-              <button class="btn btn-success" type="submit">Search</button>
+              <button class="btn btn-block" type="submit" style="background-color:yellow">Search</button>
             </form>
           </div>
         </div>
@@ -100,7 +123,7 @@
           </li>
 
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><i class='fas fa-user'></i>&nbsp;</a>
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><i class='fas fa-user'></i></a>
             <div class="dropdown-menu dropdown-menu-right">
               <a class="dropdown-item" href="{% url 'account:profile-view' %}">Profile</a>
               <a class="dropdown-item" href="{% url 'cabshare:my_bookings' %}">My Bookings</a>
@@ -108,7 +131,8 @@
               <a class="dropdown-item" href="{% url 'cabshare:mychats' %}">My Chats</a>
               <a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a>
             </div>
-          </li>
+          </li>&nbsp;&nbsp;&nbsp;
+          <li class="nav-item"> <a href="{% url 'cabshare:feedback' %}"> <button type="button" class="btn" style="background-color:yellow"> Contact us</button> </a> </li>
         </ul>
       </div>
     </nav>

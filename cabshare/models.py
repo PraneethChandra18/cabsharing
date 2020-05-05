@@ -27,6 +27,9 @@ class Booking(models.Model):
     budget = models.CharField(max_length=100)
     special_note = models.TextField(null=True,blank=True)
     is_active = models.BooleanField(default=True) #Goes inactive after completion of time, helps in searches
+    drop = models.BooleanField(default=False)
+    going_together = models.IntegerField(default=0)
+
 
     def get_absolute_url(self):
         return reverse('cabshare:current_bookings')
@@ -53,3 +56,7 @@ class Notification(models.Model):
     type = models.CharField(max_length=10,default="request")
     notification = models.TextField()
     seen = models.BooleanField(default=False)
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
+    feedback = models.TextField()

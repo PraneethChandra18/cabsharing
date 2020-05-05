@@ -18,8 +18,9 @@ urlpatterns = [
     path('joinrequest/',views.joinrequest,name='joinrequest'),
     path('cancelrequest/',views.cancelrequest,name='cancelrequest'),
     path('viewrequest/<int:pk>/',views.viewrequests,name='booking-viewrequests'),
+    path('viewrequestsothers/<int:pk>/',views.viewrequestsothers,name='booking-viewrequestsothers'),
     path('acceptrequest/',views.acceptrequest,name='acceptrequest'),
-    path('ignorerequest/<int:pk>/',views.ignorerequest,name='ignorerequest'),
+    path('ignorerequest/',views.ignorerequest,name='ignorerequest'),
     path('myrequests/',views.myrequests,name='myrequests'),
     path('chat/<int:pk>',views.chat,name='chat'),
     path('chat/delete/<int:pk>',views.deletechat,name='delete-chat'),
@@ -27,6 +28,11 @@ urlpatterns = [
     path('mychats/',views.mychats,name='mychats'),
     path('notifications/',views.notifications,name='notifications'),
     path('notifications/delete_all',views.notify_delete_all,name='notification-delete-all'),
+
+    path('drop_booking/',views.drop_booking,name='drop_booking'),
+    path('make_active/',views.make_active,name='make_active'),
+
+    path('feedback/',views.feedback,name='feedback'),
 
 
 

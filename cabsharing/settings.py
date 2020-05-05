@@ -152,8 +152,11 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# @login-required
 
-#Social-Auth
+LOGIN_URL = 'account:home'
+
+# Social-Auth
 LOGIN_REDIRECT_URL = 'account:login-redirect'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '484349640168-jrv52evii87ghneeblcjuv80mvc3i8q5.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'PuG4f8UGmxG6xX__T1dZfT2L'

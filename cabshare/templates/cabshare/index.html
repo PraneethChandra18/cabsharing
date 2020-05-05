@@ -3,6 +3,20 @@
 {% block title %} Profile {% endblock %}
 
 {% block body %}
+
+{% if messages %}
+ <div class="messages">
+     {% for message in messages %}
+     <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+     <div class="alert alert-success alert-dismissible">
+       <button type="button" class="close" data-dismiss="alert">&times;</button>
+       {{ message }}
+     </div>
+   </div>
+     {% endfor %}
+ </div>
+{% endif %}
+
 <style>
 ::-webkit-scrollbar {
     width: 0px;
@@ -34,31 +48,37 @@
             <p class="card-text"> Amount_of_luggage : {{ booking.amount_of_luggage }} </p>
             <p class="card-text"> Budget : {{ booking.budget }} </p>
             <p class="card-text"> Booking created by <a href="{% url 'account:profile-another-user' booking.user.pk %}">{{ booking.user.username }}</a> </p>
-
-            {% if requests %}
-              {% for request in requests %}
-                {% if request.to_booking == booking %}
-                  {% if not request.accept %}
-                    <span id="unjoin{{request.pk}}"><button type="button" class="btn btn-primary" id="cancel{{request.pk}}" value="{{request.pk}}" onclick="cancelrequest(this);">Cancel Request</button> </span>
-                  {% else %}
-                  <span id="unjoin{{request.pk}}">
-                    <div class="dropdown">
-                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="#"><button type="button" class="btn btn-light" id="cancel{{request.pk}}" value="{{request.pk}}" onclick="cancelrequest(this);">Untag</button></a>
+            {% if booking.drop == False %}
+              {% if requests %}
+                {% for request in requests %}
+                  {% if request.to_booking == booking %}
+                    {% if not request.accept %}
+                      <span id="unjoin{{request.pk}}"><button type="button" class="btn btn-primary" id="cancel{{request.pk}}" value="{{request.pk}}" name="cancel" onclick="cancelrequest(this);">Cancel Request</button> </span>
+                    {% else %}
+                    <span id="unjoin{{request.pk}}">
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Tagged </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                          <a class="dropdown-item" href="#"><button type="button" class="btn btn-light" id="cancel{{request.pk}}" value="{{request.pk}}" name="untag" onclick="cancelrequest(this);">Untag</button></a>
+                        </div>
                       </div>
-                    </div>
-                  </span>
+                    </span>
+                    {% endif %}
                   {% endif %}
+                {% endfor %}
+                {% if not booking in to_bookings %}
+                  <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" id="request{{ booking }}" name="{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button></span>
                 {% endif %}
-              {% endfor %}
-              {% if not booking in to_bookings %}
+              {% else %}
                 <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" id="request{{ booking }}" name="{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button></span>
               {% endif %}
             {% else %}
-              <span id="join{{ booking.pk }}"><button type="button" class="btn btn-primary" id="request{{ booking }}" name="{{ booking.pk }}" value="{{ booking.user.pk }}" onclick="joinrequest(this);request(this);">Request to join</button></span>
+              <div class="alert alert-danger">
+                This booking was dropped by the user.
+              </div>
             {% endif %}
-            <br/>
+            <br>
+            <br>
               <a href="{% url 'cabshare:chat' booking.user.pk %}"><button type="button" class="btn btn-primary">Chat</button> </a>
           </div>
         </div>
@@ -83,7 +103,7 @@
           dataType: 'json',
           success: function (data) {
             place = "join" + input
-            html = '<span id="unjoin'+data['pk']+'"><button type="button" class="btn btn-primary" id="cancel'+data['pk']+'" value="'+data['pk']+'" onclick="cancelrequest(this);">Cancel Request</button> </span>'
+            html = '<span id="unjoin'+data['pk']+'"><button type="button" class="btn btn-primary" id="cancel'+data['pk']+'" name="cancel" value="'+data['pk']+'" onclick="cancelrequest(this);">Cancel Request</button> </span>'
             document.getElementById(place).innerHTML = html;
           }
         });
@@ -91,12 +111,13 @@
 
   function cancelrequest(d) {
       var input = d.getAttribute('value');
-
+      var type = d.getAttribute('name');
       $.ajax({
           url: "{% url 'cabshare:cancelrequest' %}",
           data: {
             csrfmiddlewaretoken: "{{ csrf_token }}",
-            'inputValue': input
+            'inputValue': input,
+            'type':type
           },
           dataType: 'json',
           success: function (data) {

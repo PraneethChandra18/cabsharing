@@ -1,7 +1,2 @@
 1. Chat is being deleted for both the user with delete option. It has to be changed.
-2. Forgot Password option.
-3. Better frontend, can always be done!
-4. "You and x others are going together" to view details.
-5. Login -- ModalForm
-6. Home page
-7. Drop option
+2. Forgot Password, Change Password options.

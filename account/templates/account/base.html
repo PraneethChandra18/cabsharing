@@ -7,11 +7,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" />
+    <!-- <link rel="stylesheet" href="{% static 'account/style.css' %}" type="text/css" /> -->
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>{% block title %}CabShare{% endblock %}</title>
   </head>
+  <style>
+    body{
+      background-color: #6f6f6f;
+    }
+  </style>
+
   <body>
     <div class="modal" id="myModalsearch">
       <div class="modal-dialog modal-dialog-centered">
@@ -24,7 +30,8 @@
           <div class="modal-body">
             <form  action="{% url 'cabshare:search' %}" method="get">
               <div class="form-group row">
-                <label for="starting_point"> Starting Point : </label>
+                <label for="starting_point" class="col"> Starting Point : </label>
+                <div class="col">
                 <select id="starting_point" name="starting_point">
                   <option value="IIT GUWAHATI">IIT GUWAHATI</option>
                   <option value="A">A</option>
@@ -36,9 +43,11 @@
                   <option value="G">G</option>
                 </select>
               </div>
+              </div>
 
               <div class="form-group row">
-                <label for="destination"> Destination  : </label>
+                <label for="destination" class="col"> Destination : </label>
+                <div class="col">
                 <select id="destination" name="destination">
                   <option value="IIT GUWAHATI">IIT GUWAHATI</option>
                   <option value="A">A</option>
@@ -50,16 +59,21 @@
                   <option value="G">G</option>
                 </select>
               </div>
-              <div class="form-group row">
-                <label for="date"> Date  : </label>
-                <input type="date" id="date" name="date" value="{{ request.GET.date}}">
               </div>
               <div class="form-group row">
-                <label for="time"> Time  : </label>
+                <label for="date" class="col"> Date : </label>
+                <div class="col">
+                <input type="date" id="date" name="date" value="{{ request.GET.date}}">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="time" class="col"> Time : </label>
+                <div class="col">
                 <input type="time" name="time" value="{{ request.GET.time}}">
+                </div>
               </div>
 
-              <button class="btn btn-success" type="submit">Search</button>
+              <button class="btn btn-block" type="submit" style="background-color:yellow">Search</button>
             </form>
           </div>
         </div>
